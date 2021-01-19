@@ -3,8 +3,9 @@ const { ConflictError, NotFoundError } = require('../errors');
 
 class ProductController {
     async createProduct(productData) {
-        const [product, hasBeenCreated] = await Product.findOrCreate({ where: productData } );
-        if (!hasBeenCreated) throw new ConflictError('Product already exists');
+        console.log(productData);
+        const product = await Product.create(productData);
+        //if (!hasBeenCreated) throw new ConflictError('Product already exists');
 
         return product;
     }
@@ -13,10 +14,18 @@ class ProductController {
         return Product.findAll();
     }
 
-    async editProduct(productData) {
-        const {id,name,price,description,units,mainPicture} = productData;
+    async getProductById(id){
         const product = await Product.findByPk(id);
-        if (!Product) throw new NotFoundError('Product not found');
+        if (!product) throw new NotFoundError('Product not found');
+
+        return product;
+    }
+
+    async editProduct(id,productData) {
+        const {name,price,description,units,mainPicture} = productData;
+        const product = await Product.findByPk(id);
+        console.log(product);
+        if (!product) throw new NotFoundError('Product not found');
 
         if(name){
             product.name = name;
@@ -34,7 +43,7 @@ class ProductController {
             product.mainPicture = mainPicture;
         }
 
-        await Product.save();
+        await product.save();
 
         return product;
     }
@@ -43,7 +52,7 @@ class ProductController {
         const product = await Product.findByPk(id);
         if(!product) throw new NotFoundError('Product not found');
 
-        await Product.destroy();
+        await product.destroy();
     }
 }
 
