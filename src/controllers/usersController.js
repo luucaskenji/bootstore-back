@@ -10,6 +10,10 @@ class UserController {
 
         return createdUser;
     }
+
+    getAll() {
+        return User.findAll();
+    }
 }
 
 module.exports = new UserController();
