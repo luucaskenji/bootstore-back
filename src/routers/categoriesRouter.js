@@ -1,12 +1,14 @@
 const router = require('express').Router();
 
 const categoriesController = require('../controllers/categoriesController');
+const categoriesSchemas = require('../schemas/categoriesSchemas');
 const { ConflictError, NotFoundError } = require('../errors');
 
 router.post('/', async (req, res) => {
-    const { name } = req.body;
+    const { error } = categoriesSchemas.categoryName.validate(req.body);
+    if (error) return res.sendStatus(422);
 
-    // validar req.body
+    const { name } = req.body;
 
     try {
         const createdCategory = await categoriesController.createCategory(name);
@@ -34,9 +36,12 @@ router.get('/', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-    const { name } = req.body;
+    const { error } = categoriesSchemas.categoryName.validate(req.body);
+    if (error) return res.sendStatus(422);
+
     let { id } = req.params;
     id = parseInt(id);
+    const { name } = req.body;
 
     try {
         res.status(200).send(await categoriesController.editCategory(id, name));
