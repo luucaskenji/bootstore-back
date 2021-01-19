@@ -22,12 +22,20 @@ module.exports = {
         allowNull: true,
       },
       units: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       mainPicture: {
         type: Sequelize.STRING,
         allowNull: true,
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        allowNull: false
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        allowNull: false
       }
     });
   },

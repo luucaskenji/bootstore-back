@@ -28,6 +28,14 @@ module.exports = {
           model: 'products',
           key: 'id'
         }
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        allowNull: false
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        allowNull: false
       }
     });
   },

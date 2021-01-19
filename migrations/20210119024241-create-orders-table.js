@@ -18,7 +18,16 @@ module.exports = {
         }
       },
       status: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'awaiting payment'
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        allowNull: false
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
         allowNull: false
       }
     });
