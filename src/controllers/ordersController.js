@@ -3,16 +3,20 @@ const OrderProduct = require("../models/OrderProducts");
 const Product = require("../models/Product");
 
 class OrderController {
-    // async createOrder(orderData) {
-    //     const { userId, products } = orderData;
+    async createOrder(orderData) {
+        const { userId, products } = orderData;
+        const order = await Order.create({userId});
+        await this._createOrderProduct(order.id,products);
 
-    // }
+        return await Order.findByPk(order.id,{include:Product, through: OrderProduct});
+     }
 
-    // _createOrderProduct(products){
-    //     products.forEach(p => async {
-    //         await 
-    //     })
-    // }
+    async _createOrderProduct(orderId,products) {
+        products.forEach(async (p) => {
+            const {productId, quantity} = p;
+            await OrderProduct.create({ productId, quantity, orderId });
+        });
+    }
 
     getAll() {
         return Order.findAll({
