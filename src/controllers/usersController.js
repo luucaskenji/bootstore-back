@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const { ConflictError } = require('../errors');
+const { ConflictError, NotFoundError } = require('../errors');
 
 class UserController {
     async createUser(userData) {
@@ -13,6 +13,13 @@ class UserController {
 
     getAll() {
         return User.findAll();
+    }
+
+    async deleteUser(id) {
+        const requiredUser = await User.findByPk(id);
+        if (!requiredUser) throw new NotFoundError('User not found');
+
+        await requiredUser.destroy();
     }
 }
 
