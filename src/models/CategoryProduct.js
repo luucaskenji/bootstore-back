@@ -30,7 +30,7 @@ CategoryProduct.init(
     },
     {
         sequelize,
-        modelName: 'categoryProduct'
+        modelName: 'categoryProduct',
     }
 );
 

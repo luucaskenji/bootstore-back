@@ -1,6 +1,6 @@
 const Product = require('../models/Product');
 const { ConflictError, NotFoundError } = require('../errors');
-const CategoryProduct = require('../models/CategoryProducts');
+const CategoryProduct = require('../models/CategoryProduct');
 const Category = require('../models/Category');
 
 class ProductController {
@@ -16,7 +16,7 @@ class ProductController {
         return Product.findAll({
             include: [{
                 model: Category,
-                attributes: ['id','name'],
+                attributes: ['id', 'name'],
                 through: {
                     attributes: []
                 }
@@ -72,12 +72,16 @@ class ProductController {
         const category = await Category.findByPk(categoryId);
         if (!category) throw new NotFoundError('Category not found');
 
-        const categoryProduct = await CategoryProduct.findOne({where: {productId,categoryId}});
-        if(categoryProduct){
+        const categoryProduct = await CategoryProduct.findOne({ where: { productId, categoryId } });
+        if (categoryProduct) {
             throw new ConflictError('Relation already exists');
         }
 
         await CategoryProduct.create({ productId, categoryId });
+    }
+
+    getCategoryProducts(){
+        return CategoryProduct.findAll();
     }
 }
 

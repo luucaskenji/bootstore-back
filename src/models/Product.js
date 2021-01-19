@@ -26,7 +26,7 @@ Product.init(
             type:Sequelize.INTEGER,
         },
         mainPicture:{
-            type:Sequelize.STRING
+            type:Sequelize.STRING,
         },
         createdAt: {
             type: Sequelize.DATE,

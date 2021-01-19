@@ -9,8 +9,9 @@ app.use(express.json());
 
 const categoriesRouter = require('./routers/categoriesRouter');
 const productsRouter = require('./routers/productsRouter');
-
+const adminRouter = require('./routers/admin/adminRouter');
 app.use('/categories', categoriesRouter);
 app.use('/products', productsRouter);
+app.use('/admin', adminRouter);
 
 module.exports = app;
