@@ -1,7 +1,15 @@
 const User = require('../models/User');
+const { ConflictError } = require('../errors');
 
 class UserController {
-    createUser() {
-        User.create()
+    async createUser(userData) {
+        const { name, cpf, email } = userData;
+
+        const [createdUser, hasBeenCreated] = await User.findOrCreate({ where: { cpf }, defaults: { name, email } });
+        if (!hasBeenCreated) throw new ConflictError('User is already on database');
+
+        return createdUser;
     }
 }
+
+module.exports = new UserController();
