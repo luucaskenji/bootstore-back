@@ -80,6 +80,14 @@ class ProductController {
         await CategoryProduct.create({ productId, categoryId });
     }
 
+    async deleteCategoryProduct(id) {
+        const categoryProduct = await CategoryProduct.findOne({ where: { id } });
+        if (!categoryProduct) {
+            throw new NotFoundError('Relation not found');
+        }
+        await categoryProduct.destroy();
+    }
+
     getCategoryProducts(){
         return CategoryProduct.findAll();
     }

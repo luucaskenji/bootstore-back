@@ -3,10 +3,16 @@ const OrderProduct = require("../models/OrderProducts");
 const Product = require("../models/Product");
 
 class OrderController {
-    async createOrder(orderData) {
-        const { userId, products } = orderData;
+    // async createOrder(orderData) {
+    //     const { userId, products } = orderData;
 
-    }
+    // }
+
+    // _createOrderProduct(products){
+    //     products.forEach(p => async {
+    //         await 
+    //     })
+    // }
 
     getAll() {
         return Order.findAll({
