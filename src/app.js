@@ -8,7 +8,9 @@ app.use(cors());
 app.use(express.json());
 
 const categoriesRouter = require('./routers/categoriesRouter');
+const usersRouter = require('./routers/usersRouter');
 
 app.use('/categories', categoriesRouter);
+app.use('/users', usersRouter);
 
 module.exports = app;
