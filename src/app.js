@@ -11,6 +11,7 @@ const categoriesRouter = require('./routers/categoriesRouter');
 const productsRouter = require('./routers/productsRouter');
 const adminRouter = require('./routers/admin/adminRouter');
 const usersRouter = require('./routers/usersRouter');
+const ordersRouter = require('./routers/ordersRouter.js');
 
 app.use('/categories', categoriesRouter);
 app.use('/products', productsRouter);
