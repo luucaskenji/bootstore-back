@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const { ConflictError, NotFoundError } = require('../errors');
 
-class UserController {
+class UsersController {
     async createUser(userData) {
         const { name, cpf, email } = userData;
 
@@ -23,4 +23,4 @@ class UserController {
     }
 }
 
-module.exports = new UserController();
+module.exports = new UsersController();

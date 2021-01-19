@@ -1,7 +1,7 @@
 const Category = require('../models/Category');
 const { ConflictError, NotFoundError } = require('../errors');
 
-class CategoryController {
+class CategoriesController {
     async createCategory(name) {
         const [category, hasBeenCreated] = await Category.findOrCreate({ where: { name } });
         if (!hasBeenCreated) throw new ConflictError('Category already exists');
@@ -31,4 +31,4 @@ class CategoryController {
     }
 }
 
-module.exports = new CategoryController();
+module.exports = new CategoriesController();
