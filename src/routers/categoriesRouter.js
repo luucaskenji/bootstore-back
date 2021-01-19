@@ -19,4 +19,13 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.get('/', async (req, res) => {
+    try {
+        res.status(200).send(await categoriesController.getAll());
+    }
+    catch(err) {
+        res.sendStatus(500);
+    }
+});
+
 module.exports = router;

@@ -8,6 +8,10 @@ class CategoryController {
 
         return category;
     }
+
+    getAll() {
+        return Category.findAll();
+    }
 }
 
 module.exports = new CategoryController();
