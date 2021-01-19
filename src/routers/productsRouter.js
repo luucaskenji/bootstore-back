@@ -1,19 +1,16 @@
 const router = require('express').Router();
-
-const categoriesController = require('../controllers/categoriesController');
-const { ConflictError } = require('../errors');
-
+const productsController = require('../controllers/productsController');
 router.post('/', async (req, res) => {
-    const { name } = req.body;
+    const { name, price, description, units, mainPicture } = req.body;
 
     // validar req.body
 
     try {
-        const createdCategory = await categoriesController.createCategory(name);
+        const createdProduct = await productsController.createProduct(name);
 
-        res.status(201).send(createdCategory);
+        res.status(201).send(createdProduct);
     }
-    catch(err) {
+    catch (err) {
         console.log(err);
         if (err instanceof ConflictError) return res.status(409).send(err.message);
         else res.sendStatus(500);
@@ -28,7 +25,7 @@ router.get('/', async (req, res) => {
         });
         res.status(200).send(await categoriesController.getAll());
     }
-    catch(err) {
+    catch (err) {
         console.log(err);
         res.sendStatus(500);
     }
