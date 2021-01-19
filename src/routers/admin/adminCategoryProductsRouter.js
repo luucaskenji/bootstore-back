@@ -4,8 +4,8 @@ const productsSchemas = require('../../schemas/productsSchemas');
 const { ConflictError, NotFoundError } = require('../../errors');
 const Category = require('../../models/Category');
 
-router.post('/products/:productId/categories/:categoryId', async (req,res) => {
-    let {productId, categoryId} = req.params;
+router.post('/', async (req,res) => {
+    let {productId, categoryId} = req.body;
     productId = parseInt(productId);
     categoryId = parseInt(categoryId);
 
