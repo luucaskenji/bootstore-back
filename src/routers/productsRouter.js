@@ -7,7 +7,6 @@ router.post('/', async (req, res) => {
 
     try {
         const createdProduct = await productsController.createProduct(req.body);
-
         res.status(201).send(createdProduct);
     }
     catch (err) {
@@ -33,14 +32,13 @@ router.get('/', async (req, res) => {
 
 
 router.put('/:id', async (req, res) => {
-    
+    //validar req.body
 
     let { id } = req.params;
     id = parseInt(id);
-    const { name } = req.body;
 
     try {
-        res.status(200).send(await productsController.editProduct(id, name));
+        res.status(200).send(await productsController.editProduct(productData));
     }
     catch(err) {
         if (err instanceof NotFoundError) return res.status(404).send(err.message);
