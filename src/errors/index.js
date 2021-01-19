@@ -1,3 +1,4 @@
 const ConflictError = require('./ConflictError');
+const NotFoundError = require('./NotFoundError');
 
-module.exports = { ConflictError };
+module.exports = { ConflictError, NotFoundError };
