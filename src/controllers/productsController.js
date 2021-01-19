@@ -1,5 +1,7 @@
 const Product = require('../models/Product');
 const { ConflictError, NotFoundError } = require('../errors');
+const CategoryProduct = require('../models/CategoryProducts');
+const Category = require('../models/Category');
 
 class ProductController {
     async createProduct(productData) {
@@ -11,35 +13,43 @@ class ProductController {
     }
 
     getAll() {
-        return Product.findAll();
+        return Product.findAll({
+            include: [{
+                model: Category,
+                attributes: ['id','name'],
+                through: {
+                    attributes: []
+                }
+            }]
+        });
     }
 
-    async getProductById(id){
+    async getProductById(id) {
         const product = await Product.findByPk(id);
         if (!product) throw new NotFoundError('Product not found');
 
         return product;
     }
 
-    async editProduct(id,productData) {
-        const {name,price,description,units,mainPicture} = productData;
+    async editProduct(id, productData) {
+        const { name, price, description, units, mainPicture } = productData;
         const product = await Product.findByPk(id);
         console.log(product);
         if (!product) throw new NotFoundError('Product not found');
 
-        if(name){
+        if (name) {
             product.name = name;
         }
-        if(price){
+        if (price) {
             product.price = price;
         }
-        if(description){
+        if (description) {
             product.description = description;
         }
-        if(units){
+        if (units) {
             product.units = units;
         }
-        if(mainPicture){
+        if (mainPicture) {
             product.mainPicture = mainPicture;
         }
 
@@ -50,9 +60,24 @@ class ProductController {
 
     async deleteProduct(id) {
         const product = await Product.findByPk(id);
-        if(!product) throw new NotFoundError('Product not found');
+        if (!product) throw new NotFoundError('Product not found');
 
         await product.destroy();
+    }
+
+    async createCategoryProduct(productId, categoryId) {
+        const product = await Product.findByPk(productId);
+        if (!product) throw new NotFoundError('Product not found');
+
+        const category = await Category.findByPk(categoryId);
+        if (!category) throw new NotFoundError('Category not found');
+
+        const categoryProduct = await CategoryProduct.findOne({where: {productId,categoryId}});
+        if(categoryProduct){
+            throw new ConflictError('Relation already exists');
+        }
+
+        await CategoryProduct.create({ productId, categoryId });
     }
 }
 

@@ -2,21 +2,9 @@ const router = require('express').Router();
 const productsController = require('../controllers/productsController');
 const productsSchemas = require('../schemas/productsSchemas');
 const { ConflictError, NotFoundError } = require('../errors');
-router.post('/', async (req, res) => {
-    const { error } = productsSchemas.postProduct.validate(req.body);
-    if (error) return res.sendStatus(422);
+const Category = require('../models/Category');
 
-    try {
-        const createdProduct = await productsController.createProduct(req.body);
-        res.status(201).send(createdProduct);
-    }
-    catch (err) {
-        console.log(err);
-        if (err instanceof ConflictError) return res.status(409).send(err.message);
-        else res.sendStatus(500);
-    }
-});
-
+//USER && ADMIN
 router.get('/:id', async (req, res) => {
     let { id } = req.params;
     id = parseInt(id);
@@ -44,12 +32,14 @@ router.get('/', async (req, res) => {
     }
 });
 
+//ADMIN
+
 router.put('/:id', async (req, res) => {
     //validar req.body
 
     let { id } = req.params;
     id = parseInt(id);
-    
+
     try {
         res.status(200).send(await productsController.editProduct(id,req.body));
     }
@@ -74,5 +64,37 @@ router.delete('/:id', async (req, res) => {
         else res.sendStatus(500);
     }
 });
+
+router.post('/', async (req, res) => {
+    const { error } = productsSchemas.postProduct.validate(req.body);
+    if (error) return res.sendStatus(422);
+
+    try {
+        const createdProduct = await productsController.createProduct(req.body);
+        res.status(201).send(createdProduct);
+    }
+    catch (err) {
+        console.log(err);
+        if (err instanceof ConflictError) return res.status(409).send(err.message);
+        else res.sendStatus(500);
+    }
+});
+
+router.post('/:productId/categories/:categoryId', async (req,res) => {
+    let {productId, categoryId} = req.params;
+    productId = parseInt(productId);
+    categoryId = parseInt(categoryId);
+
+    try{
+        await productsController.createCategoryProduct(productId,categoryId);
+        res.sendStatus(200);
+    }
+    catch (err) {
+        console.log(err);
+        if (err instanceof ConflictError) return res.status(409).send(err.message);
+        else res.sendStatus(500);
+    }
+});
+
 
 module.exports = router;
