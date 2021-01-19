@@ -26,21 +26,12 @@ router.get('/', async (req, res) => {
     try {
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
-<<<<<<< HEAD
-            'Content-Range': 'categories 0-10/20'
-        });
-        res.status(200).send(await categoriesController.getAll());
-    }
-    catch(err) {
-        console.log(err);
-=======
             'Content-Range': 10
         });
 
         res.status(200).send(await categoriesController.getAll());
     }
     catch {
->>>>>>> main
         res.sendStatus(500);
     }
 });
