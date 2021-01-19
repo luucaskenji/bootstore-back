@@ -1,5 +1,5 @@
 const Category = require('../models/Category');
-const { ConflictError } = require('../errors');
+const { ConflictError, NotFoundError } = require('../errors');
 
 class CategoryController {
     async createCategory(name) {
@@ -11,6 +11,16 @@ class CategoryController {
 
     getAll() {
         return Category.findAll();
+    }
+
+    async editCategory(id, name) {
+        const category = await Category.findByPk(id);
+        if (!category) throw new NotFoundError('Category not found');
+        
+        category.name = name;
+        await category.save();
+
+        return category;
     }
 }
 
