@@ -47,4 +47,19 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+router.delete('/:id', async (req, res) => {
+    let { id } = req.params;
+    id = parseInt(id);
+
+    try {
+        await categoriesController.deleteCategory(id);
+        res.sendStatus(204);
+    }
+    catch(err) {
+        console.error(err);
+        if (err instanceof NotFoundError) return res.status(404).send(err.message);
+        else res.sendStatus(500);
+    }
+});
+
 module.exports = router;

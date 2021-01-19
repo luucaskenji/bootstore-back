@@ -22,6 +22,13 @@ class CategoryController {
 
         return category;
     }
+
+    async deleteCategory(id) {
+        const category = await Category.findByPk(id);
+        if(!category) throw new NotFoundError('Category not found');
+
+        await category.destroy();
+    }
 }
 
 module.exports = new CategoryController();
