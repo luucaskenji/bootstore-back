@@ -1,25 +1,26 @@
 const router = require('express').Router();
 const productsController = require('../../controllers/productsController');
 const productsSchemas = require('../../schemas/productsSchemas');
+const authMiddleware = require('../../middlewares/auth');
 const { ConflictError, NotFoundError } = require('../../errors');
 const Category = require('../../models/Category');
 
 //USER && ADMIN
-router.get('/:id', async (req, res) => {
+router.get('/:id', authMiddleware, async (req, res) => {
     let { id } = req.params;
     id = parseInt(id);
+
     try {
         const product = await productsController.getProductById(id);
         res.status(200).send(product);
     }
     catch (err) {
-        console.log(err);
         if (err instanceof NotFoundError) return res.status(404).send(err.message);
         else res.sendStatus(500);
     }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
     try {
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
@@ -28,16 +29,12 @@ router.get('/', async (req, res) => {
         res.status(200).send(await productsController.getAll());
     }
     catch (err) {
-        console.log(err);
         res.sendStatus(500);
     }
 });
 
 //ADMIN
-
-router.put('/:id', async (req, res) => {
-    //validar req.body
-
+router.put('/:id', authMiddleware, async (req, res) => {
     let { id } = req.params;
     id = parseInt(id);
 
@@ -45,7 +42,6 @@ router.put('/:id', async (req, res) => {
         res.status(200).send(await productsController.editProduct(id,req.body));
     }
     catch (err) {
-        console.log(err);
         if (err instanceof NotFoundError) return res.status(404).send(err.message);
         else res.sendStatus(500);
     }
@@ -60,7 +56,6 @@ router.delete('/:id', async (req, res) => {
         res.sendStatus(204);
     }
     catch (err) {
-        console.error(err);
         if (err instanceof NotFoundError) return res.status(404).send(err.message);
         else res.sendStatus(500);
     }
@@ -75,14 +70,13 @@ router.post('/', async (req, res) => {
         res.status(201).send(createdProduct);
     }
     catch (err) {
-        console.log(err);
         if (err instanceof ConflictError) return res.status(409).send(err.message);
         else res.sendStatus(500);
     }
 });
 
 router.post('/:productId/categories/:categoryId', async (req,res) => {
-    let {productId, categoryId} = req.params;
+    let { productId, categoryId } = req.params;
     productId = parseInt(productId);
     categoryId = parseInt(categoryId);
 
@@ -91,7 +85,6 @@ router.post('/:productId/categories/:categoryId', async (req,res) => {
         res.sendStatus(200);
     }
     catch (err) {
-        console.log(err);
         if (err instanceof ConflictError) return res.status(409).send(err.message);
         else res.sendStatus(500);
     }
@@ -99,13 +92,11 @@ router.post('/:productId/categories/:categoryId', async (req,res) => {
 
  router.get('/categories', async (req, res) => {
      try {
-         const relations = await productsController.getCategoryProducts();
-         console.log(relations);
-         res.status(200).send(relations);
+        const relations = await productsController.getCategoryProducts();
+        res.status(200).send(relations);
      }
      catch (err) {
-         console.log(err);
-         res.sendStatus(500);
+        res.sendStatus(500);
      }
  });
 

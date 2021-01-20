@@ -2,6 +2,7 @@ const router = require('express').Router();
 
 const userSchemas = require('../../schemas/userSchemas');
 const usersController = require('../../controllers/usersController');
+const authMiddleware = require('../../middlewares/auth');
 const { ConflictError, NotFoundError, AuthError } = require('../../errors');
 
 router.post('/', async (req, res) => {
@@ -41,7 +42,7 @@ router.post('/sign-out', async (req, res) => {
     }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
     try {
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
@@ -54,7 +55,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', authMiddleware, async (req, res) => {
     try {
         res.status(200).send(await usersController.getUserById(req.params.id));
     }
@@ -63,7 +64,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
     const id = parseInt(req.params.id);
 
     try {
