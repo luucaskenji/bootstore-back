@@ -23,7 +23,7 @@ class OrderController {
             include: [{
                 model: Product,
                 through: {
-                    attributes: []
+                    attributes: ['quantity']
                 }
             }]
         });
