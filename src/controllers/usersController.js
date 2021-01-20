@@ -1,4 +1,7 @@
+const uuid = require('uuid');
+
 const User = require('../models/User');
+const Session = require('../models/Session');
 const { ConflictError, NotFoundError } = require('../errors');
 
 class UsersController {
@@ -26,6 +29,16 @@ class UsersController {
         const user = await User.findByPk(id);
         if(!user) throw new NotFoundError('User not found');
         return user;
+    }
+
+    postAdminSignIn(email, password) {
+        if (email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD) {
+            throw new AuthError('Wrong email or password');
+        }
+
+        const token = uuid.v4();
+
+        return Session.create({ token });
     }
 }
 

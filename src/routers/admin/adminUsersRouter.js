@@ -17,6 +17,17 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.post('/sign-in', async (req, res) => {
+    const { email, password } = req.body;
+    
+    try {        
+        res.status(201).send(await usersController.postAdminSignIn(email, password));
+    }
+    catch {
+        res.sendStatus(500);
+    }
+});
+
 router.get('/', async (req, res) => {
     try {
         res.set({
