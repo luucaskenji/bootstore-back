@@ -122,7 +122,6 @@ module.exports = {
         productId: 15,
         url: 'https://d17e8p84ng9nyb.cloudfront.net/wp-content/uploads/2020/02/pulseira-mala-agata-indiana-flor-da-vida-pulso.jpg' 
       }
-
     ])
      
   }
