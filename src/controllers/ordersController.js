@@ -30,7 +30,7 @@ class OrderController {
     }
 
     async getOrderById(id) {
-        const order = await Order.findByPk(id);
+        const order = await Order.findByPk(id,{include: Product,through: OrderProduct});
         if (!order) throw new NotFoundError('Order not found');
 
         return order;
