@@ -1,33 +1,35 @@
 const router = require('express').Router();
 const productsController = require('../../controllers/productsController');
+const authMiddleware = require('../../middlewares/auth');
 const productsSchemas = require('../../schemas/productsSchemas');
 const { ConflictError, NotFoundError } = require('../../errors');
 const Category = require('../../models/Category');
 
-router.post('/', async (req,res) => {
-    let {productId, categoryId} = req.body;
+router.post('/', authMiddleware, async (req,res) => {
+    let { productId, categoryId } = req.body;
     productId = parseInt(productId);
     categoryId = parseInt(categoryId);
 
-    try{
+    try {
         await productsController.createCategoryProduct(productId,categoryId);
         res.sendStatus(200);
     }
-    catch (err) {
-        console.log(err);
-        if (err instanceof ConflictError) return res.status(409).send(err.message);
+    catch(err) {
+        if (err instanceof ConflictError) res.status(409).send(err.message);
         else res.sendStatus(500);
     }
 });
 
- router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
     let limit = null;
     let offset = null;
-    if(req.query.range){
+
+    if (req.query.range) {
         const range = JSON.parse(req.query.range);
         limit = range[1] - range[0] + 1;
         offset = range[0];
     }
+
     try {
         const relations = await productsController.getCategoryProducts(limit,offset)
         const total = (await productsController.getCategoryProducts()).length;
@@ -35,20 +37,21 @@ router.post('/', async (req,res) => {
             'Access-Control-Expose-Headers': 'Content-Range',
             'Content-Range': `${offset}-${relations.length}/${total}`
         });
-        res.send(relations);
+
+        const relations = await productsController.getCategoryProducts();
+        res.status(200).send(relations);
     }
     catch (err) {
-        console.log(err);
         res.sendStatus(500);
     }
  });
- router.delete('/:id', async (req, res) => {
+
+router.delete('/:id', authMiddleware, async (req, res) => {
     try {
         await productsController.deleteCategoryProduct(req.params.id);
         res.status(200);
     }
-    catch (err) {
-        console.log(err);
+    catch(err) {
         res.sendStatus(500);
     }
 });
