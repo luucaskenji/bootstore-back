@@ -1,5 +1,7 @@
 const Category = require('../models/Category');
+const productController = require('./productsController');
 const { ConflictError, NotFoundError } = require('../errors');
+const CategoryProduct = require('../models/CategoryProduct');
 
 class CategoriesController {
     async createCategory(name) {
@@ -26,6 +28,8 @@ class CategoriesController {
     async deleteCategory(id) {
         const category = await Category.findByPk(id);
         if(!category) throw new NotFoundError('Category not found');
+        
+        await CategoryProduct.destroy({where: {categoryId: id}});
 
         await category.destroy();
     }
