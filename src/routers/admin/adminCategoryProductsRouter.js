@@ -38,7 +38,6 @@ router.get('/', authMiddleware, async (req, res) => {
             'Content-Range': `${offset}-${relations.length}/${total}`
         });
 
-        const relations = await productsController.getCategoryProducts();
         res.status(200).send(relations);
     }
     catch (err) {
