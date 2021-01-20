@@ -12,8 +12,10 @@ class ProductController {
         return product;
     }
 
-    getAll() {
+    getAll(limit = null,offset = null) {
         return Product.findAll({
+            limit,
+            offset,
             include: [{
                 model: Category,
                 attributes: ['id', 'name'],
@@ -87,8 +89,8 @@ class ProductController {
         await categoryProduct.destroy();
     }
 
-    getCategoryProducts(){
-        return CategoryProduct.findAll();
+    getCategoryProducts(limit = null, offset = null){
+        return CategoryProduct.findAll({limit,offset});
     }
 }
 

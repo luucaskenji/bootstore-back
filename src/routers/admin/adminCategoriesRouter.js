@@ -24,15 +24,26 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 router.get('/', authMiddleware, async (req, res) => {
+    let limit = null;
+    let offset = null;
+
+    if(req.query.range){
+        const range = JSON.parse(req.query.range);
+        limit = range[1] - range[0] + 1;
+        offset = range[0];
+    }
+    
     try {
+        const categories = await categoriesController.getAll(limit,offset)
+        const total = (await categoriesController.getAll()).length;
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
-            'Content-Range': 10
+            'Content-Range': `${offset}-${categories.length}/${total}`
         });
-
-        res.status(200).send(await categoriesController.getAll());
+        res.send(categories);
     }
-    catch {
+    catch (err) {
+        console.log(err);
         res.sendStatus(500);
     }
 });
@@ -69,4 +80,24 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = router;     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

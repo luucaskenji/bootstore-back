@@ -14,8 +14,8 @@ class UsersController {
         return createdUser;
     }
 
-    getAll() {
-        return User.findAll();
+    getAll(limit = null, offset = null) {
+        return User.findAll({limit,offset});
     }
 
     async deleteUser(id) {

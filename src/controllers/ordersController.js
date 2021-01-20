@@ -18,12 +18,14 @@ class OrderController {
         });
     }
 
-    getAll() {
+    getAll(limit = null, offset = null) {
         return Order.findAll({
+            limit,
+            offset,
             include: [{
                 model: Product,
                 through: {
-                    attributes: []
+                    attributes: ['quantity']
                 }
             }]
         });
