@@ -6,4 +6,9 @@ const identityData = Joi.object({
     cpf: Joi.string().pattern(/^[0-9]{3}.*[0-9]{3}.*[0-9]{3}-*[0-9]{2}$/).required()
 });
 
-module.exports = { identityData };
+const adminSignIn = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required()
+});
+
+module.exports = { identityData, adminSignIn };
