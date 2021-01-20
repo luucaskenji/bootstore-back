@@ -21,6 +21,12 @@ class UsersController {
 
         await requiredUser.destroy();
     }
+
+    async getUserById(id){
+        const user = await User.findByPk(id);
+        if(!user) throw new NotFoundError('User not found');
+        return user;
+    }
 }
 
 module.exports = new UsersController();
