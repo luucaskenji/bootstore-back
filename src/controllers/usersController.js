@@ -31,9 +31,9 @@ class UsersController {
         return user;
     }
 
-    postAdminSignIn(email, password) {
-        if (email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD) {
-            throw new AuthError('Wrong email or password');
+    postAdminSignIn(username, password) {
+        if (username !== process.env.ADMIN_USERNAME || password !== process.env.ADMIN_PASSWORD) {
+            throw new AuthError('Wrong username or password');
         }
 
         const token = uuid.v4();

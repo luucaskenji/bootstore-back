@@ -18,10 +18,13 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/sign-in', async (req, res) => {
-    const { email, password } = req.body;
-    
+    const { error } = userSchemas.adminSignIn.validate(req.body);
+    if (error) return res.sendStatus(422);
+
+    const { username, password } = req.body;
+
     try {        
-        res.status(201).send(await usersController.postAdminSignIn(email, password));
+        res.status(201).send(await usersController.postAdminSignIn(username, password));
     }
     catch(err) {
         if (err instanceof AuthError) res.status(403).send(err.message);
