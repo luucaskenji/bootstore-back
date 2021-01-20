@@ -28,6 +28,15 @@ router.post('/sign-in', async (req, res) => {
     }
 });
 
+router.post('/sign-out', async (req, res) => {    
+    try {        
+        res.status(204).send(await usersController.postAdminSignOut());
+    }
+    catch {
+        res.sendStatus(500);
+    }
+});
+
 router.get('/', async (req, res) => {
     try {
         res.set({

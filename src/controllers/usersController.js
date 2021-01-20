@@ -40,6 +40,10 @@ class UsersController {
 
         return Session.create({ token });
     }
+
+    postAdminSignOut() {
+        Session.destroy({ where: {} });
+    }
 }
 
 module.exports = new UsersController();
