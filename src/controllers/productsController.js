@@ -36,7 +36,6 @@ class ProductController {
     async editProduct(id, productData) {
         const { name, price, description, units, mainPicture } = productData;
         const product = await Product.findByPk(id);
-        console.log(product);
         if (!product) throw new NotFoundError('Product not found');
 
         if (name) {
