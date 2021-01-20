@@ -20,14 +20,23 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
+    let limit = null;
+    let offset = null;
+    if(req.query.range){
+        const range = JSON.parse(req.query.range);
+        limit = range[1] - range[0] + 1;
+        offset = range[0];
+    }
     try {
+        const orders = await ordersController.getAll(limit,offset)
+        const total = (await ordersController.getAll()).length;
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
-            'Content-Range': 10
+            'Content-Range': `${offset}-${orders.length}/${total}`
         });
-        res.status(200).send(await ordersController.getAll());
+        res.send(orders);
     }
-    catch(err) {
+    catch (err) {
         console.log(err);
         res.sendStatus(500);
     }

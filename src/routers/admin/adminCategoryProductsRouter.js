@@ -21,20 +21,27 @@ router.post('/', async (req,res) => {
 });
 
  router.get('/', async (req, res) => {
-     try {
+    let limit = null;
+    let offset = null;
+    if(req.query.range){
+        const range = JSON.parse(req.query.range);
+        limit = range[1] - range[0] + 1;
+        offset = range[0];
+    }
+    try {
+        const relations = await productsController.getCategoryProducts(limit,offset)
+        const total = (await productsController.getCategoryProducts()).length;
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
-            'Content-Range': 10
+            'Content-Range': `${offset}-${relations.length}/${total}`
         });
-         const relations = await productsController.getCategoryProducts();
-         res.status(200).send(relations);
-     }
-     catch (err) {
-         console.log(err);
-         res.sendStatus(500);
-     }
+        res.send(relations);
+    }
+    catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
  });
-
  router.delete('/:id', async (req, res) => {
     try {
         await productsController.deleteCategoryProduct(req.params.id);

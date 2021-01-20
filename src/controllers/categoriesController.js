@@ -9,8 +9,8 @@ class CategoriesController {
         return category;
     }
 
-    getAll() {
-        return Category.findAll();
+    getAll(limit = null, offset = null) {
+        return Category.findAll({limit,offset});
     }
 
     async editCategory(id, name) {
