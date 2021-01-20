@@ -21,7 +21,6 @@ module.exports = {
         userId: 1,
         status: 'closed'
       }
-
     ])
      
   }

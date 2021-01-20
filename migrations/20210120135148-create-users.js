@@ -23,7 +23,6 @@ module.exports = {
         email: 'barrospedrao@gmail.com',
         cpf: '333.444.888-55'
       }
-
     ])
      
   }

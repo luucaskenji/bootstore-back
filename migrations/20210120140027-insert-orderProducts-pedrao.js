@@ -70,7 +70,7 @@ module.exports = {
         quantity: 3,
         orderId: 1,
         productId: 11 
-      },
+      }
 
     ])
      
