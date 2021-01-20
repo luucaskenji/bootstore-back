@@ -2,7 +2,7 @@ const uuid = require('uuid');
 
 const User = require('../models/User');
 const Session = require('../models/Session');
-const { ConflictError, NotFoundError } = require('../errors');
+const { ConflictError, NotFoundError, AuthError } = require('../errors');
 
 class UsersController {
     async createUser(userData) {

@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const userSchemas = require('../../schemas/userSchemas');
 const usersController = require('../../controllers/usersController');
-const { ConflictError, NotFoundError } = require('../../errors');
+const { ConflictError, NotFoundError, AuthError } = require('../../errors');
 
 router.post('/', async (req, res) => {
     const { error } = userSchemas.identityData.validate(req.body);
@@ -23,8 +23,9 @@ router.post('/sign-in', async (req, res) => {
     try {        
         res.status(201).send(await usersController.postAdminSignIn(email, password));
     }
-    catch {
-        res.sendStatus(500);
+    catch(err) {
+        if (err instanceof AuthError) res.status(403).send(err.message);
+        else res.sendStatus(500);
     }
 });
 
