@@ -19,6 +19,10 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
+        res.set({
+            'Access-Control-Expose-Headers': 'Content-Range',
+            'Content-Range': 10
+        });
         res.status(200).send(await usersController.getAll());
     }
     catch {
