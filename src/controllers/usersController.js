@@ -44,6 +44,10 @@ class UsersController {
     postAdminSignOut() {
         Session.destroy({ where: {} });
     }
+
+    postUserAddress() {
+        
+    }
 }
 
 module.exports = new UsersController();

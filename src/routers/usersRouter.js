@@ -38,4 +38,17 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+router.post('/:id/address', (req, res) => {
+    const { error } = userSchemas.addressdata.validate(req.body);
+    if (error) return res.sendStatus(422);
+
+    try {
+        res.sendStatus(201);
+    }
+    catch(err) {
+        console.error(err);
+        res.sendStatus(500);
+    }
+});
+
 module.exports = router;
