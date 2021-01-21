@@ -7,7 +7,7 @@ class OrderController {
         const { userId, products } = orderData;
         const order = await Order.create({userId});
         await this._createOrderProduct(order.id,products);
-
+        
         return await Order.findByPk(order.id,{include:Product, through: OrderProduct});
      }
 
@@ -37,6 +37,8 @@ class OrderController {
 
         return order;
     }
+
+    
 
     async deleteOrder(id) {
         const order = await Order.findByPk(id);

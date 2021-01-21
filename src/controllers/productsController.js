@@ -6,9 +6,12 @@ const Picture = require('../models/Picture');
 
 class ProductController {
     async createProduct(productData) {
-        console.log(productData);
+        
+        const { name } = productData;
+        const findProduct = await Product.findOne({where: {name}});
+        if (findProduct !== null) throw new ConflictError('Product already exists');
+
         const product = await Product.create(productData);
-        //if (!hasBeenCreated) throw new ConflictError('Product already exists');
 
         return product;
     }
@@ -57,6 +60,7 @@ class ProductController {
     async editProduct(id, productData) {
         const { name, price, description, units, mainPicture } = productData;
         const product = await Product.findByPk(id);
+
         if (!product) throw new NotFoundError('Product not found');
 
         if (name) {
