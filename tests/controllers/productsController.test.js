@@ -227,7 +227,7 @@ describe('Testing deleteProduct of procutsController', () => {
 
 describe('Testing createCategoryProduct of productsController', () => {
 
-    it('createCategoryProduct - Should return an throw error trying to create a category product for products does not exists.', async () => {
+    it('createCategoryProduct - Should return a throw error if categoryProduct does not exists.', async () => {
         
         const Product = require('../../src/models/Product');
 
@@ -241,7 +241,7 @@ describe('Testing createCategoryProduct of productsController', () => {
         expect(product).rejects.toThrow(NotFoundError)
     });
 
-    it('createCategoryProduct - Should return an throw error trying to create a category product with a category does not exists.', async () => {
+    it('createCategoryProduct - Should return a throw error if categoryProduct does not exists.', async () => {
         
         const Category = require('../../src/models/Category');
 
@@ -255,8 +255,8 @@ describe('Testing createCategoryProduct of productsController', () => {
         expect(product).rejects.toThrow(NotFoundError)
     });
 
-    it('createCategoryProduct - Should return an throw error trying to create relation already exists.', async () => {
-       
+    it('createCategoryProduct - Should return a throw error trying to create relation already exists.', async () => {
+
         const CategoryProduct = require('../../src/models/CategoryProduct');
 
         CategoryProduct.findOne.mockResolvedValue({
@@ -270,7 +270,42 @@ describe('Testing createCategoryProduct of productsController', () => {
             return await productsController.createCategoryProduct(1, 2);
         }
 
-        expect(product).rejects.toThrow(ConflictError)
+        expect(product).rejects.toThrow(NotFoundError)
+    });
+
+    it('createCategoryProduct - Should return a throw error if categoryProduct already exists.', async () => {
+
+        const Product = require('../../src/models/Product');
+        Product.findByPk.mockResolvedValue({
+            "id": 1,
+            "name": "Incenso Massala Nag Champa",
+            "price": 1400,
+            "description": "Energia da Meditação",
+            "units": 7,
+            "mainPicture": "https://d17e8p84ng9nyb"
+           
+        });
+
+        const Category = require('../../src/models/Category');
+        Category.findByPk.mockResolvedValue({
+             "id": 1,
+             "name": "Incenso"
+        });
+
+        const CategoryProduct = require('../../src/models/CategoryProduct');
+
+        CategoryProduct.findOne.mockResolvedValue({
+            "id": 1,
+            "productId": 1,
+            "categoryId": 2,
+        });
+
+        async function categoryProduct() {
+            return await productsController.createCategoryProduct(1, 1);
+        }
+
+        expect(categoryProduct).rejects.toThrow(ConflictError)
+
     });
 
     it('createCategoryProduct - Should return undefined if CategoryProduct was successfully created.', async () => {
@@ -287,14 +322,12 @@ describe('Testing createCategoryProduct of productsController', () => {
         });
 
         const Category = require('../../src/models/Category');
-
         Category.findByPk.mockResolvedValue({
              "id": 1,
              "name": "Incenso"
         });
 
         const CategoryProduct = require('../../src/models/CategoryProduct');
-
         CategoryProduct.findOne.mockResolvedValue(null);
 
         CategoryProduct.create.mockResolvedValue({
@@ -309,37 +342,38 @@ describe('Testing createCategoryProduct of productsController', () => {
 
     });
 
-    describe('Testing deleteCategoryProduct of productsController', () => {
+});
 
-        it('deleteCategoryProduct - should return a throw error if the relations does not exist.', async () => {
-            
-            const CategoryProduct = require('../../src/models/CategoryProduct');
+describe('Testing deleteCategoryProduct of productsController', () => {
 
-            CategoryProduct.findOne.mockResolvedValue(null);
-    
-            async function categoryProduct() {
-                return await productsController.deleteCategoryProduct(1);
-            }
-    
-            expect(categoryProduct).rejects.toThrow(NotFoundError)
-        });
-    
-        it('deleteCategory - Should return undefined if relation was successfully deleted', async () => {
-    
-            const CategoryProduct = require('../../src/models/CategoryProduct');
+    it('deleteCategoryProduct - should return a throw error if the relations does not exist.', async () => {
+        
+        const CategoryProduct = require('../../src/models/CategoryProduct');
 
-            CategoryProduct.findOne.mockResolvedValue({
-                "id": 1,
-                "productId": 1,
-                "categoryId": 2,
-                destroy: async () => Promise.resolve()
-            });
-    
-            const relation = await productsController.deleteCategoryProduct(1);
-            
-            expect(relation).toBe(undefined)
-        })
+        CategoryProduct.findOne.mockResolvedValue(null);
+
+        async function categoryProduct() {
+            return await productsController.deleteCategoryProduct(1);
+        }
+
+        expect(categoryProduct).rejects.toThrow(NotFoundError)
     });
+
+    it('deleteCategory - Should return undefined if relation was successfully deleted', async () => {
+
+        const CategoryProduct = require('../../src/models/CategoryProduct');
+
+        CategoryProduct.findOne.mockResolvedValue({
+            "id": 1,
+            "productId": 1,
+            "categoryId": 2,
+            destroy: async () => Promise.resolve()
+        });
+
+        const relation = await productsController.deleteCategoryProduct(1);
+        
+        expect(relation).toBe(undefined)
+    })
 });
 
 describe('Testing getTopSellers of productsController', () => {
