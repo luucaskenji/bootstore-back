@@ -94,15 +94,7 @@ describe('Testing getProductById of productsController', () => {
     it('getProductById - Should return a throw error if the product does not exist.', async () => {
 
         const Product = require('../../src/models/Product');
-        Product.findByPk.mockResolvedValue({
-            "id": 1,
-            "name": "Incenso Massala Nag Champa",
-            "price": 1400,
-            "description": "Energia da Meditação",
-            "units": 7,
-            "mainPicture": "https://d17e8p84ng9nyb"
-           
-        });
+        Product.findByPk.mockResolvedValue(null);
 
             
         async function product() {
@@ -145,15 +137,7 @@ describe('Testing editProduct of productsController', () => {
     it('editProduct - should return an error throw if the product does not exist.', async () => {
         
         const Product = require('../../src/models/Product');
-        Product.findByPk.mockResolvedValue({
-            "id": 1,
-            "name": "Incenso Massala Nag Champa",
-            "price": 1400,
-            "description": "Energia da Meditação",
-            "units": 7,
-            "mainPicture": "https://d17e8p84ng9nyb"
-           
-        });
+        Product.findByPk.mockResolvedValue(null);
 
         const productData = {
             "name": "INCENSO MassalAAa Nag Champa",
@@ -207,17 +191,9 @@ describe('Testing editProduct of productsController', () => {
 
 describe('Testing deleteProduct of procutsController', () => {
 
-    it('deleteProduct - should return a throw error if the category does not exist.', async () => {
+    it('deleteProduct - should return a throw error if the product does not exist.', async () => {
         const Product = require('../../src/models/Product');
-        Product.findByPk.mockResolvedValue({
-            "id": 1,
-            "name": "Incenso Massala Nag Champa",
-            "price": 1400,
-            "description": "Energia da Meditação",
-            "units": 7,
-            "mainPicture": "https://d17e8p84ng9nyb"
-           
-        });
+        Product.findByPk.mockResolvedValue(null);
 
         async function product() {
             return await productsController.deleteProduct(99) 
