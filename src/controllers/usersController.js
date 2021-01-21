@@ -7,12 +7,15 @@ const { ConflictError, NotFoundError, AuthError } = require('../errors');
 
 class UsersController {
     async createUser(userData) {
-        const { name, cpf, email } = userData;
+        const { cpf } = userData;
 
-        const [createdUser, hasBeenCreated] = await User.findOrCreate({ where: { cpf }, defaults: { name, email } });
-        if (!hasBeenCreated) throw new ConflictError('User is already on database');
+        const findUser = await User.findOne({ where: { cpf }  });
+        if (findUser !== null) throw new ConflictError('User is already on database');
+
+        const createdUser = await User.create(userData);
 
         return createdUser;
+
     }
 
     getAll(limit = null, offset = null) {
@@ -32,18 +35,18 @@ class UsersController {
         return user;
     }
 
-    postAdminSignIn(username, password) {
+    async postAdminSignIn(username, password) {
         if (username !== process.env.ADMIN_USERNAME || password !== process.env.ADMIN_PASSWORD) {
             throw new AuthError('Wrong username or password');
         }
 
         const token = uuid.v4();
 
-        return Session.create({ token });
+        return await Session.create({ token });
     }
 
-    postAdminSignOut() {
-        Session.destroy({ where: {} });
+    async postAdminSignOut(token) {
+        await Session.destroy({ where: {token} });
     }
 
     async postUserAddress(userId, data) {
