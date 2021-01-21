@@ -1,6 +1,6 @@
 require('dotenv').config();
 const ordersController = require('../../src/controllers/ordersController');
-const { ConflictError, NotFoundError } = require ('../../src/errors/ConflictError.js');
+const { NotFoundError } = require ('../../src/errors/ConflictError.js');
 
 jest.mock('../../src/models/Order.js');
 
