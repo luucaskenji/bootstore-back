@@ -3,32 +3,57 @@ const { ConflictError, NotFoundError } = require('../errors');
 const CategoryProduct = require('../models/CategoryProduct');
 const Category = require('../models/Category');
 const OrderProduct = require('../models/OrderProducts');
-const Order = require('../models/Order');
 const { Sequelize, Op } = require('sequelize');
+const Picture = require('../models/Picture');
 
 class ProductController {
     async createProduct(productData) {
-        console.log(productData);
+        
+        const { name } = productData;
+        const findProduct = await Product.findOne({where: {name}});
+        if (findProduct !== null) throw new ConflictError('Product already exists');
+
         const product = await Product.create(productData);
-        //if (!hasBeenCreated) throw new ConflictError('Product already exists');
 
         return product;
     }
 
-    getAll() {
+    getAll(limit = null, offset = null) {
         return Product.findAll({
-            include: [{
-                model: Category,
-                attributes: ['id', 'name'],
-                through: {
-                    attributes: []
+            limit,
+            offset,
+            include: [
+                {
+                    model: Category,
+                    attributes: ['id', 'name'],
+                    through: {
+                        attributes: []
+                    }
                 }
-            }]
+                ,
+                {
+                    model: Picture
+                }
+            ]
         });
     }
 
     async getProductById(id) {
-        const product = await Product.findByPk(id);
+        const product = await Product.findByPk(id, {
+            include: [
+                {
+                    model: Category,
+                    attributes: ['id', 'name'],
+                    through: {
+                        attributes: []
+                    }
+                }
+                ,
+                {
+                    model: Picture
+                }
+            ]
+        });
         if (!product) throw new NotFoundError('Product not found');
 
         return product;
@@ -37,27 +62,25 @@ class ProductController {
     async editProduct(id, productData) {
         const { name, price, description, units, mainPicture } = productData;
         const product = await Product.findByPk(id);
-        console.log(product);
-        if (!product) throw new NotFoundError('Product not found');
 
-        if (name) {
+        if (product === null) throw new NotFoundError('Product not found');
+
+        if (name !== undefined) {
             product.name = name;
         }
-        if (price) {
+        if (price !== undefined) {
             product.price = price;
         }
-        if (description) {
+        if (description !== undefined) {
             product.description = description;
         }
-        if (units) {
+        if (units !== undefined) {
             product.units = units;
         }
-        if (mainPicture) {
+        if (mainPicture !== undefined) {
             product.mainPicture = mainPicture;
         }
-
         await product.save();
-
         return product;
     }
 
@@ -83,8 +106,12 @@ class ProductController {
         await CategoryProduct.create({ productId, categoryId });
     }
 
-    getCategoryProducts(){
-        return CategoryProduct.findAll();
+    async deleteCategoryProduct(id) {
+        const categoryProduct = await CategoryProduct.findOne({ where: { id } });
+        if (!categoryProduct) {
+            throw new NotFoundError('Relation not found');
+        }
+        await categoryProduct.destroy();
     }
 
     async getTopSellers() {
@@ -128,6 +155,10 @@ class ProductController {
 
         return topSellers;
     }
+    getCategoryProducts(limit = null, offset = null) {
+        return CategoryProduct.findAll({ limit, offset });
+    }
+
 }
 
 module.exports = new ProductController();

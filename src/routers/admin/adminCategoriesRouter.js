@@ -2,9 +2,10 @@ const router = require('express').Router();
 
 const categoriesController = require('../../controllers/categoriesController');
 const categoriesSchemas = require('../../schemas/categoriesSchemas');
+const authMiddleware = require('../../middlewares/auth');
 const { ConflictError, NotFoundError } = require('../../errors');
 
-router.post('/', async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
     const { error } = categoriesSchemas.categoryName.validate(req.body);
     if (error) return res.sendStatus(422);
 
@@ -22,21 +23,32 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
+    let limit = null;
+    let offset = null;
+
+    if(req.query.range){
+        const range = JSON.parse(req.query.range);
+        limit = range[1] - range[0] + 1;
+        offset = range[0];
+    }
+    
     try {
+        const categories = await categoriesController.getAll(limit,offset)
+        const total = (await categoriesController.getAll()).length;
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
-            'Content-Range': 10
+            'Content-Range': `${offset}-${categories.length}/${total}`
         });
-
-        res.status(200).send(await categoriesController.getAll());
+        res.send(categories);
     }
-    catch {
+    catch (err) {
+        console.log(err);
         res.sendStatus(500);
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
     const { error } = categoriesSchemas.categoryName.validate(req.body);
     if (error) return res.sendStatus(422);
 
@@ -53,7 +65,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
     let { id } = req.params;
     id = parseInt(id);
 
@@ -68,4 +80,24 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = router;     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

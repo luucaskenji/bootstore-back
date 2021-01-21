@@ -1,16 +1,22 @@
 const Category = require('../models/Category');
+const productController = require('./productsController');
 const { ConflictError, NotFoundError } = require('../errors');
+const CategoryProduct = require('../models/CategoryProduct');
 
 class CategoriesController {
     async createCategory(name) {
-        const [category, hasBeenCreated] = await Category.findOrCreate({ where: { name } });
-        if (!hasBeenCreated) throw new ConflictError('Category already exists');
+  
+        const category = await Category.findOne({ where: { name } });
+        if (category !== null) throw new ConflictError('Category already exists');
 
-        return category;
+        const createdCategory = await Category.create({ name });
+        
+        return createdCategory;
+
     }
 
-    getAll() {
-        return Category.findAll();
+    getAll(limit = null, offset = null) {
+        return Category.findAll({limit,offset});
     }
 
     async editCategory(id, name) {
@@ -19,14 +25,13 @@ class CategoriesController {
         
         category.name = name;
         await category.save();
-
         return category;
     }
 
     async deleteCategory(id) {
         const category = await Category.findByPk(id);
         if(!category) throw new NotFoundError('Category not found');
-
+        
         await category.destroy();
     }
 }

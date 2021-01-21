@@ -5,32 +5,32 @@ module.exports = {
     await queryInterface.bulkInsert("categoryProducts",
       [
         {
-          productId: 1,
-          categoryId: 1,
+          productId: 11,
+          categoryId: 3,
           createdAt: new Date(),
           updatedAt: new Date() 
         },
         {
-          productId: 2,
-          categoryId: 1,
+          productId: 12,
+          categoryId: 3,
           createdAt: new Date(),
           updatedAt: new Date() 
         },
         {
-          productId: 3,
-          categoryId: 1,
+          productId: 13,
+          categoryId: 3,
           createdAt: new Date(),
           updatedAt: new Date() 
         },
         {
-          productId: 4,
-          categoryId: 1,
+          productId: 14,
+          categoryId: 3,
           createdAt: new Date(),
           updatedAt: new Date() 
         },
         {
-          productId: 5,
-          categoryId: 1,
+          productId: 15,
+          categoryId: 3,
           createdAt: new Date(),
           updatedAt: new Date() 
         },
@@ -43,24 +43,24 @@ module.exports = {
     await queryInterface.bulkDelete("categoryProducts",
     [
       {
-        productId: 1,
-        categoryId: 1,
+        productId: 11,
+        categoryId: 3,
       },
       {
-        productId: 2,
-        categoryId: 1,
+        productId: 12,
+        categoryId: 3,
       },
       {
-        productId: 3,
-        categoryId: 1, 
+        productId: 13,
+        categoryId: 3, 
       },
       {
-        productId: 4,
-        categoryId: 1, 
+        productId: 14,
+        categoryId: 3, 
       },
       {
-        productId: 5,
-        categoryId: 1,
+        productId: 15,
+        categoryId: 3,
       },
 
     ])
