@@ -63,24 +63,22 @@ class ProductController {
 
         if (product === null) throw new NotFoundError('Product not found');
 
-        if (name) {
+        if (name !== undefined) {
             product.name = name;
         }
-        if (price) {
+        if (price !== undefined) {
             product.price = price;
         }
-        if (description) {
+        if (description !== undefined) {
             product.description = description;
         }
-        if (units) {
+        if (units !== undefined) {
             product.units = units;
         }
-        if (mainPicture) {
+        if (mainPicture !== undefined) {
             product.mainPicture = mainPicture;
         }
-
         await product.save();
-
         return product;
     }
 
