@@ -2,6 +2,7 @@ const Product = require('../models/Product');
 const { ConflictError, NotFoundError } = require('../errors');
 const CategoryProduct = require('../models/CategoryProduct');
 const Category = require('../models/Category');
+const Picture = require('../models/Picture');
 
 class ProductController {
     async createProduct(productData) {
@@ -12,17 +13,23 @@ class ProductController {
         return product;
     }
 
-    getAll(limit = null,offset = null) {
+    getAll(limit = null, offset = null) {
         return Product.findAll({
             limit,
             offset,
-            include: [{
-                model: Category,
-                attributes: ['id', 'name'],
-                through: {
-                    attributes: []
+            include: [
+                {
+                    model: Category,
+                    attributes: ['id', 'name'],
+                    through: {
+                        attributes: []
+                    }
                 }
-            }]
+                ,
+                {
+                    model: Picture
+                }
+            ]
         });
     }
 
@@ -89,8 +96,20 @@ class ProductController {
         await categoryProduct.destroy();
     }
 
-    getCategoryProducts(limit = null, offset = null){
-        return CategoryProduct.findAll({limit,offset});
+    getCategoryProducts(limit = null, offset = null) {
+        return CategoryProduct.findAll({ limit, offset });
+    }
+
+    async addPicture(pictureId, url) {
+        const picture = await Picture.findOne({ where: { productId, url } });
+        if (picture) {
+            throw new ConflictError('Picture already exists');
+        }
+        return await Picture.create({ pictureId, url });
+    }
+
+    async getPictures(limit = null, offset = null) {
+        return await Picture.fildAll({limit,offset});
     }
 }
 
