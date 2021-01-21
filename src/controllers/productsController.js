@@ -88,6 +88,9 @@ class ProductController {
         const product = await Product.findByPk(id);
         if (!product) throw new NotFoundError('Product not found');
 
+        await CategoryProduct.destroy({where: {productId: product.id}});
+        await OrderProduct.destroy({where: {productId: product.id}});
+
         await product.destroy();
     }
 
