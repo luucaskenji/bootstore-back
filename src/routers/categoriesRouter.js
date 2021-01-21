@@ -5,6 +5,7 @@ const categoriesSchemas = require('../schemas/categoriesSchemas');
 const { ConflictError, NotFoundError } = require('../errors');
 
 router.get('/', async (req, res) => {
+    
     try {
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',

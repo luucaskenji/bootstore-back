@@ -34,7 +34,21 @@ class ProductController {
     }
 
     async getProductById(id) {
-        const product = await Product.findByPk(id);
+        const product = await Product.findByPk(id, {
+            include: [
+                {
+                    model: Category,
+                    attributes: ['id', 'name'],
+                    through: {
+                        attributes: []
+                    }
+                }
+                ,
+                {
+                    model: Picture
+                }
+            ]
+        });
         if (!product) throw new NotFoundError('Product not found');
 
         return product;
@@ -100,17 +114,6 @@ class ProductController {
         return CategoryProduct.findAll({ limit, offset });
     }
 
-    async addPicture(pictureId, url) {
-        const picture = await Picture.findOne({ where: { productId, url } });
-        if (picture) {
-            throw new ConflictError('Picture already exists');
-        }
-        return await Picture.create({ pictureId, url });
-    }
-
-    async getPictures(limit = null, offset = null) {
-        return await Picture.findAll({limit,offset});
-    }
 }
 
 module.exports = new ProductController();
