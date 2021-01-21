@@ -10,7 +10,7 @@ class UsersController {
         const { cpf } = userData;
 
         const findUser = await User.findOne({ where: { cpf }  });
-        if (findUser !== null) throw new ConflictError('User is already on database');
+        if (findUser) throw new ConflictError('User is already on database');
 
         const createdUser = await User.create(userData);
 
