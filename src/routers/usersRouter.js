@@ -38,16 +38,20 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-router.post('/:id/address', (req, res) => {
+router.post('/:id/address', async (req, res) => {
     const { error } = userSchemas.addressdata.validate(req.body);
     if (error) return res.sendStatus(422);
 
+    const userId = parseInt(req.params.id);
+
     try {
-        res.sendStatus(201);
+        const createdAddress = await usersController.postUserAddress(userId, req.body);
+
+        res.status(201).send(createdAddress);
     }
     catch(err) {
-        console.error(err);
-        res.sendStatus(500);
+        if (err instanceof NotFoundError) res.status(404).send(err.message);
+        else res.sendStatus(500);
     }
 });
 
