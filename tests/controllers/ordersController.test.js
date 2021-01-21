@@ -88,14 +88,7 @@ describe('Testing getOrderById of ordersController', () => {
     it('getOrderById - Should return a throw error if the order does not exist.', async () => {
 
         const Order = require('../../src/models/Order');
-        Order.findByPk.mockResolvedValue({
-            "onderId": 1,
-            "products": [
-                {
-                    productId: 1 ,
-                    quantity: 13
-                },
-            ]});
+        Order.findByPk.mockResolvedValue(null);
 
             
         async function order() {
@@ -139,14 +132,7 @@ describe('Testing deleteOrder of ordersController', () => {
 
     it('deleteOrder - should return a throw error if the order does not exist.', async () => {
         const Order = require('../../src/models/Order');
-        Order.findByPk.mockResolvedValue({
-            "onderId": 1,
-            "products": [
-                {
-                    productId: 1 ,
-                    quantity: 13
-                },
-            ]});
+        Order.findByPk.mockResolvedValue(null);
 
         async function order() {
             return await ordersController.deleteOrder(99) 

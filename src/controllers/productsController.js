@@ -61,7 +61,7 @@ class ProductController {
         const { name, price, description, units, mainPicture } = productData;
         const product = await Product.findByPk(id);
 
-        if (!product) throw new NotFoundError('Product not found');
+        if (product === null) throw new NotFoundError('Product not found');
 
         if (name) {
             product.name = name;
