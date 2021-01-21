@@ -2,6 +2,7 @@ const uuid = require('uuid');
 
 const User = require('../models/User');
 const Session = require('../models/Session');
+const Address = require('../models/Address');
 const { ConflictError, NotFoundError, AuthError } = require('../errors');
 
 class UsersController {
@@ -14,8 +15,8 @@ class UsersController {
         return createdUser;
     }
 
-    getAll() {
-        return User.findAll();
+    getAll(limit = null, offset = null) {
+        return User.findAll({limit,offset});
     }
 
     async deleteUser(id) {
@@ -43,6 +44,23 @@ class UsersController {
 
     postAdminSignOut() {
         Session.destroy({ where: {} });
+    }
+
+    async postUserAddress(userId, data) {
+        const user = await User.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundError('User not found');
+
+        const {
+            cep,
+            streetName,
+            streetNumber,
+            neighbourhood,
+            complement,
+            state,
+            city
+        } = data;
+
+        return Address.create({ userId, cep, streetName, streetNumber, neighbourhood, complement, state, city });
     }
 }
 

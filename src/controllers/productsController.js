@@ -2,6 +2,7 @@ const Product = require('../models/Product');
 const { ConflictError, NotFoundError } = require('../errors');
 const CategoryProduct = require('../models/CategoryProduct');
 const Category = require('../models/Category');
+const Picture = require('../models/Picture');
 
 class ProductController {
     async createProduct(productData) {
@@ -15,20 +16,42 @@ class ProductController {
         return product;
     }
 
-    getAll() {
+    getAll(limit = null, offset = null) {
         return Product.findAll({
-            include: [{
-                model: Category,
-                attributes: ['id', 'name'],
-                through: {
-                    attributes: []
+            limit,
+            offset,
+            include: [
+                {
+                    model: Category,
+                    attributes: ['id', 'name'],
+                    through: {
+                        attributes: []
+                    }
                 }
-            }]
+                ,
+                {
+                    model: Picture
+                }
+            ]
         });
     }
 
     async getProductById(id) {
-        const product = await Product.findByPk(id);
+        const product = await Product.findByPk(id, {
+            include: [
+                {
+                    model: Category,
+                    attributes: ['id', 'name'],
+                    through: {
+                        attributes: []
+                    }
+                }
+                ,
+                {
+                    model: Picture
+                }
+            ]
+        });
         if (!product) throw new NotFoundError('Product not found');
 
         return product;
@@ -37,7 +60,7 @@ class ProductController {
     async editProduct(id, productData) {
         const { name, price, description, units, mainPicture } = productData;
         const product = await Product.findByPk(id);
-        
+
         if (!product) throw new NotFoundError('Product not found');
 
         if (name) {
@@ -91,9 +114,10 @@ class ProductController {
         await categoryProduct.destroy();
     }
 
-    getCategoryProducts(){
-        return CategoryProduct.findAll();
+    getCategoryProducts(limit = null, offset = null) {
+        return CategoryProduct.findAll({ limit, offset });
     }
+
 }
 
 module.exports = new ProductController();

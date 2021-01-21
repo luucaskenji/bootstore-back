@@ -1,5 +1,7 @@
 const Category = require('../models/Category');
+const productController = require('./productsController');
 const { ConflictError, NotFoundError } = require('../errors');
+const CategoryProduct = require('../models/CategoryProduct');
 
 class CategoriesController {
     async createCategory(name) {
@@ -13,8 +15,8 @@ class CategoriesController {
 
     }
 
-    getAll() {
-        return Category.findAll();
+    getAll(limit = null, offset = null) {
+        return Category.findAll({limit,offset});
     }
 
     async editCategory(id, name) {
@@ -29,6 +31,7 @@ class CategoriesController {
     async deleteCategory(id) {
         const category = await Category.findByPk(id);
         if(!category) throw new NotFoundError('Category not found');
+        
         await category.destroy();
     }
 }

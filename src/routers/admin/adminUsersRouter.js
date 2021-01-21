@@ -2,6 +2,7 @@ const router = require('express').Router();
 
 const userSchemas = require('../../schemas/userSchemas');
 const usersController = require('../../controllers/usersController');
+const authMiddleware = require('../../middlewares/auth');
 const { ConflictError, NotFoundError, AuthError } = require('../../errors');
 
 router.post('/', async (req, res) => {
@@ -41,20 +42,31 @@ router.post('/sign-out', async (req, res) => {
     }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
+    let limit = null;
+    let offset = null;
+
+    if (req.query.range) {
+        const range = JSON.parse(req.query.range);
+        limit = range[1] - range[0] + 1;
+        offset = range[0];
+    }
+
     try {
+        const users = await usersController.getAll(limit,offset)
+        const total = (await usersController.getAll()).length;
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
-            'Content-Range': 10
+            'Content-Range': `${offset}-${users.length}/${total}`
         });
-        res.status(200).send(await usersController.getAll());
+        res.send(users);
     }
-    catch {
+    catch(err) {
         res.sendStatus(500);
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', authMiddleware, async (req, res) => {
     try {
         res.status(200).send(await usersController.getUserById(req.params.id));
     }
@@ -63,7 +75,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
     const id = parseInt(req.params.id);
 
     try {
