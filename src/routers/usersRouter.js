@@ -9,7 +9,9 @@ router.post('/', async (req, res) => {
     if (error) return res.sendStatus(422);
 
     try {
-        res.status(201).send(await usersController.createUser(req.body));
+        const createdUser = await usersController.createUser(req.body);
+
+        res.status(201).send(createdUser);
     }
     catch(err) {
         if (err instanceof ConflictError) res.status(409).send(err.message);
@@ -19,7 +21,9 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        res.status(200).send(await usersController.getAll());
+        const users = await usersController.getAll();
+
+        res.status(200).send(users);
     }
     catch {
         res.sendStatus(500);
@@ -30,7 +34,9 @@ router.delete('/:id', async (req, res) => {
     const id = parseInt(req.params.id);
 
     try {
-        res.status(204).send(await usersController.deleteUser(id));
+        await usersController.deleteUser(id);
+
+        res.sendStatus(204);
     }
     catch(err) {
         if (err instanceof NotFoundError) res.status(404).send(err.message);

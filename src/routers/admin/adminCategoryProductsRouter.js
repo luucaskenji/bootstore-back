@@ -2,8 +2,7 @@ const router = require('express').Router();
 const productsController = require('../../controllers/productsController');
 const authMiddleware = require('../../middlewares/auth');
 const productsSchemas = require('../../schemas/productsSchemas');
-const { ConflictError, NotFoundError } = require('../../errors');
-const Category = require('../../models/Category');
+const { ConflictError } = require('../../errors');
 
 router.post('/', authMiddleware, async (req,res) => {
     let { productId, categoryId } = req.body;
@@ -12,6 +11,7 @@ router.post('/', authMiddleware, async (req,res) => {
 
     try {
         await productsController.createCategoryProduct(productId,categoryId);
+
         res.sendStatus(200);
     }
     catch(err) {
@@ -31,8 +31,9 @@ router.get('/', authMiddleware, async (req, res) => {
     }
 
     try {
-        const relations = await productsController.getCategoryProducts(limit,offset)
+        const relations = await productsController.getCategoryProducts(limit,offset);
         const total = (await productsController.getCategoryProducts()).length;
+
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
             'Content-Range': `${offset}-${relations.length}/${total}`
@@ -40,15 +41,18 @@ router.get('/', authMiddleware, async (req, res) => {
 
         res.status(200).send(relations);
     }
-    catch (err) {
+    catch(err) {
         res.sendStatus(500);
     }
  });
 
 router.delete('/:id', authMiddleware, async (req, res) => {
+    const id = parseInt(req.params.id);
+
     try {
-        await productsController.deleteCategoryProduct(req.params.id);
-        res.status(200);
+        await productsController.deleteCategoryProduct(id);
+        
+        res.status(204);
     }
     catch(err) {
         res.sendStatus(500);

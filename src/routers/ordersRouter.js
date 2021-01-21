@@ -10,6 +10,7 @@ router.post('/', async (req, res) => {
 
     try {
         const order = await ordersController.createOrder(req.body);
+
         res.status(201).send(order);
     }
     catch(err) {
@@ -20,7 +21,9 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        res.status(200).send(await ordersController.getAll());
+        const orders = await ordersController.getAll();
+
+        res.status(200).send(orders);
     }
     catch {
         res.sendStatus(500);
@@ -29,8 +32,11 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     const id = parseInt(req.params.id);
+
     try {
-        res.status(200).send(await ordersController.getOrderById(id));
+        const order = await ordersController.getOrderById(id);
+
+        res.status(200).send(order);
     }
     catch {
         res.sendStatus(500);
@@ -42,7 +48,9 @@ router.delete('/:id', async (req, res) => {
     const id = parseInt(req.params.id);
 
     try {
-        res.status(204).send(await ordersController.deleteOrder(id));
+        await ordersController.deleteOrder(id);
+
+        res.sendStatus(204);
     }
     catch(err) {
         if (err instanceof NotFoundError) res.status(404).send(err.message);

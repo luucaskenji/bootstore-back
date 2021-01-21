@@ -10,7 +10,9 @@ router.post('/', async (req, res) => {
     if (error) return res.sendStatus(422);
 
     try {
-        res.status(201).send(await usersController.createUser(req.body));
+        const createdUser = await usersController.createUser(req.body);
+
+        res.status(201).send(createdUser);
     }
     catch(err) {
         if (err instanceof ConflictError) res.status(409).send(err.message);
@@ -24,8 +26,10 @@ router.post('/sign-in', async (req, res) => {
 
     const { username, password } = req.body;
 
-    try {        
-        res.status(201).send(await usersController.postAdminSignIn(username, password));
+    try {
+        const newSession = await usersController.postAdminSignIn(username, password);
+
+        res.status(201).send(newSession);
     }
     catch(err) {
         if (err instanceof AuthError) res.status(403).send(err.message);
@@ -34,8 +38,10 @@ router.post('/sign-in', async (req, res) => {
 });
 
 router.post('/sign-out', async (req, res) => {    
-    try {        
-        res.status(204).send(await usersController.postAdminSignOut());
+    try {
+        await usersController.postAdminSignOut();
+
+        res.sendStatus(204);
     }
     catch {
         res.sendStatus(500);
@@ -67,8 +73,12 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 router.get('/:id', authMiddleware, async (req, res) => {
+    const id = parseInt(req.params.id);
+
     try {
-        res.status(200).send(await usersController.getUserById(req.params.id));
+        const user = await usersController.getUserById(req.params.id);
+
+        res.status(200).send(user);
     }
     catch {
         res.sendStatus(500);
@@ -79,7 +89,9 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     const id = parseInt(req.params.id);
 
     try {
-        res.status(204).send(await usersController.deleteUser(id));
+        await usersController.deleteUser(id);
+        
+        res.sendStatus(204);
     }
     catch(err) {
         if (err instanceof NotFoundError) res.status(404).send(err.message);

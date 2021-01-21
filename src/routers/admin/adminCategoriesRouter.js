@@ -17,7 +17,6 @@ router.post('/', authMiddleware, async (req, res) => {
         res.status(201).send(createdCategory);
     }
     catch(err) {
-        console.log(err);
         if (err instanceof ConflictError) return res.status(409).send(err.message);
         else res.sendStatus(500);
     }
@@ -34,16 +33,17 @@ router.get('/', authMiddleware, async (req, res) => {
     }
     
     try {
-        const categories = await categoriesController.getAll(limit,offset)
+        const categories = await categoriesController.getAll(limit,offset);
         const total = (await categoriesController.getAll()).length;
+
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
             'Content-Range': `${offset}-${categories.length}/${total}`
         });
+
         res.send(categories);
     }
-    catch (err) {
-        console.log(err);
+    catch(err) {
         res.sendStatus(500);
     }
 });
@@ -52,12 +52,13 @@ router.put('/:id', authMiddleware, async (req, res) => {
     const { error } = categoriesSchemas.categoryName.validate(req.body);
     if (error) return res.sendStatus(422);
 
-    let { id } = req.params;
-    id = parseInt(id);
+    const id = parseInt(req.params.id);
     const { name } = req.body;
 
     try {
-        res.status(200).send(await categoriesController.editCategory(id, name));
+        const category = await categoriesController.editCategory(id, name);
+
+        res.status(200).send(category);
     }
     catch(err) {
         if (err instanceof NotFoundError) return res.status(404).send(err.message);
@@ -66,15 +67,14 @@ router.put('/:id', authMiddleware, async (req, res) => {
 });
 
 router.delete('/:id', authMiddleware, async (req, res) => {
-    let { id } = req.params;
-    id = parseInt(id);
+    const id = parseInt(req.params.id);
 
     try {
         await categoriesController.deleteCategory(id);
+
         res.sendStatus(204);
     }
     catch(err) {
-        console.error(err);
         if (err instanceof NotFoundError) return res.status(404).send(err.message);
         else res.sendStatus(500);
     }

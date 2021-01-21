@@ -1,22 +1,22 @@
 const router = require('express').Router();
 const picturesController = require('../../controllers/picturesController');
-const productsController = require('../../controllers/productsController');
 const authMiddleware = require('../../middlewares/auth');
 
-router.post('/', async (req, res) => {
-    const {productId,url} = req.body;
+router.post('/', authMiddleware, async (req, res) => {
+    const { productId, url } = req.body;
+
     try {
         const picture = await picturesController.createPicture(productId, url);
+
         res.status(200).send(picture);
     }
-    catch (err) {
-        console.log(err);
+    catch(err) {
         res.sendStatus(500);
     }
 });
 
 
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
     let limit = null;
     let offset = null;
 
@@ -29,28 +29,28 @@ router.get('/', async (req, res) => {
     try {
         const pictures = await picturesController.getAll(limit,offset)
         const total = (await picturesController.getAll()).length;
+
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
             'Content-Range': `${offset}-${pictures.length}/${total}`
         });
+        
         res.status(200).send(pictures);
     }
-    catch (err) {
-        console.log(err);
+    catch(err) {
         res.sendStatus(500);
     }
 });
 
 
-router.delete('/:id', async (req, res) => {
-    let { id } = req.params;
-    id = parseInt(id);
+router.delete('/:id', authMiddleware, async (req, res) => {
+    const id = parseInt(req.params.id);
+
     try {
         await picturesController.deletePicture(id);
-        res.sendStatus(200);
+        res.sendStatus(204);
     }
-    catch (err) {
-        console.log(err);
+    catch(err) {
         res.sendStatus(500);
     }
 });
