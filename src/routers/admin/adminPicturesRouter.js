@@ -42,5 +42,19 @@ router.get('/', async (req, res) => {
 });
 
 
+router.delete('/:id', async (req, res) => {
+    let { id } = req.params;
+    id = parseInt(id);
+    try {
+        await picturesController.deletePicture(id);
+        res.sendStatus(200);
+    }
+    catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+});
+
+
 
 module.exports = router;
