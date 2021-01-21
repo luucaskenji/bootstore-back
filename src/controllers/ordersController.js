@@ -9,14 +9,14 @@ class OrderController {
         await this._createOrderProduct(order.id,products);
         
         return await Order.findByPk(order.id,{include:Product, through: OrderProduct});
-     }
+    };
 
     async _createOrderProduct(orderId,products) {
         products.forEach(async (p) => {
             const {productId, quantity} = p;
             await OrderProduct.create({ productId, quantity, orderId });
         });
-    }
+    };
 
     getAll(limit = null, offset = null) {
         return Order.findAll({
@@ -29,23 +29,21 @@ class OrderController {
                 }
             }]
         });
-    }
+    };
 
     async getOrderById(id) {
         const order = await Order.findByPk(id,{include: Product,through: OrderProduct});
         if (!order) throw new NotFoundError('Order not found');
 
         return order;
-    }
-
-    
+    };
 
     async deleteOrder(id) {
         const order = await Order.findByPk(id);
         if (!order) throw new NotFoundError('Order not found');
 
         await order.destroy();
-    }
-}
+    };
+};
 
 module.exports = new OrderController();

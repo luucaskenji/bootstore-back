@@ -1,10 +1,13 @@
 require('dotenv').config();
 const productsController = require('../../src/controllers/productsController');
-const { ConflictError, NotFoundError } = require ('../../src/errors/ConflictError.js');
+const ConflictError = require ('../../src/errors/ConflictError');
+const NotFoundError = require ('../../src/errors/NotFoundError');
+
 
 jest.mock('../../src/models/Product.js');
 jest.mock('../../src/models/Category.js');
 jest.mock('../../src/models/CategoryProduct.js');
+jest.mock('../../src/models/OrderProducts.js');
 
 describe('Testing createProduct of productsController', () => {
 
@@ -306,7 +309,7 @@ describe('Testing createCategoryProduct of productsController', () => {
 
     });
 
-    describe('Testing deleteCategoryProduct of products Controller', () => {
+    describe('Testing deleteCategoryProduct of productsController', () => {
 
         it('deleteCategoryProduct - should return a throw error if the relations does not exist.', async () => {
             
@@ -336,5 +339,163 @@ describe('Testing createCategoryProduct of productsController', () => {
             
             expect(relation).toBe(undefined)
         })
+    });
+});
+
+describe('Testing getTopSellers of productsController', () => {
+
+    it('getTopSellers - Should return an array that has a length of 5 when orders.length is less than 5.', async () => {
+
+        const OrderProduct = require('../../src/models/OrderProducts');
+        const Product = require('../../src/models/Product');
+
+        OrderProduct.findAll.mockResolvedValue([
+            {"id": 1},
+            {"id": 2},
+            {"id": 3}
+        ]);
+
+        Product.findAll.mockResolvedValueOnce([
+            {
+                "id": 4,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 5,
+                "productId": 1,
+                "categoryId": 2,
+                
+            }
+        ]);
+
+        Product.findAll.mockResolvedValueOnce([
+            {
+                "id": 6,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 7,
+                "productId": 1,
+                "categoryId": 2,
+                
+            },
+            {
+                "id": 8,
+                "productId": 1,
+                "categoryId": 2,
+                
+            }
+        ]);
+
+
+        const topSellers = await productsController.getTopSellers();
+
+        expect(topSellers).toHaveLength(5);
+         
+    });
+
+    it('getTopSellers - Should return an array that has a length of 5 when orders.length its 0.', async () => {
+
+        const OrderProduct = require('../../src/models/OrderProducts');
+        const Product = require('../../src/models/Product');
+
+        OrderProduct.findAll.mockResolvedValue([]);
+
+        Product.findAll.mockResolvedValue([
+            {
+                "id": 4,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 5,
+                "productId": 1,
+                "categoryId": 2,
+                
+            },
+            {
+                "id": 6,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 7,
+                "productId": 1,
+                "categoryId": 2,
+                
+            },
+            {
+                "id": 8,
+                "productId": 1,
+                "categoryId": 2,
+                
+            }
+        ]);
+
+    
+        const topSellers = await productsController.getTopSellers();
+
+        expect(topSellers).toHaveLength(5);
+         
+    });
+
+    it('getTopSellers - Should return an array that has a length of 5 when orders.length is greater than 5.', async () => {
+
+        const OrderProduct = require('../../src/models/OrderProducts');
+        const Product = require('../../src/models/Product');
+
+        OrderProduct.findAll.mockResolvedValue([
+            {"id": 1},
+            {"id": 2},
+            {"id": 3},
+            {"id": 4},
+            {"id": 5},
+            {"id": 6},
+        ]);
+
+        Product.findAll.mockResolvedValue([
+            {
+                "id": 4,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 5,
+                "productId": 1,
+                "categoryId": 2,
+                
+            },
+            {
+                "id": 6,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 7,
+                "productId": 1,
+                "categoryId": 2,
+                
+            },
+            {
+                "id": 8,
+                "productId": 1,
+                "categoryId": 2,
+                
+            }
+        ]);
+
+    
+        const topSellers = await productsController.getTopSellers();
+
+        expect(topSellers).toHaveLength(5);
+         
     });
 });

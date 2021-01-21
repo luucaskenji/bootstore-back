@@ -15,7 +15,6 @@ class UsersController {
         const createdUser = await User.create(userData);
 
         return createdUser;
-
     }
 
     getAll(limit = null, offset = null) {

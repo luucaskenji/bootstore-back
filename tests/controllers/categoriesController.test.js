@@ -1,6 +1,9 @@
 require('dotenv').config();
 const categoriesController = require('../../src/controllers/categoriesController');
-const { ConflictError, NotFoundError } = require ('../../src/errors/ConflictError.js');
+const ConflictError = require ('../../src/errors/ConflictError');
+const NotFoundError = require ('../../src/errors/NotFoundError');
+
+
 jest.mock('../../src/models/Category.js');
 
 describe('Testing createCategory of categoriesController', () => {

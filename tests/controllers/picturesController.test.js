@@ -1,7 +1,7 @@
 require('dotenv').config();
 const picturesController = require('../../src/controllers/picturesController');
-const { ConflictError, NotFoundError } = require('../../src/errors')
-
+const ConflictError = require ('../../src/errors/ConflictError');
+const NotFoundError = require ('../../src/errors/NotFoundError');
 
 jest.mock('../../src/models/Picture.js');
 
