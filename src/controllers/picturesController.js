@@ -4,10 +4,11 @@ const Picture = require('../models/Picture');
 class PictureController {
 
     async createPicture(pictureId, url) {
-        const picture = await Picture.findOne({ where: { productId, url } });
+        const picture = await Picture.findOne({ where: { pictureId, url } });
         if (picture) {
             throw new ConflictError('Picture already exists');
         }
+
         return await Picture.create({ pictureId, url });
     }
 

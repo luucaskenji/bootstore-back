@@ -12,5 +12,4 @@ Category.belongsToMany(Product, { through: CategoryProduct });
 User.hasMany(Order);
 Order.belongsToMany(Product, { through: OrderProduct });
 Product.belongsToMany(Order, { through: OrderProduct });
-
 Product.hasMany(Picture);

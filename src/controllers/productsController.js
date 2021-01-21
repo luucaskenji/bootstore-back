@@ -2,6 +2,8 @@ const Product = require('../models/Product');
 const { ConflictError, NotFoundError } = require('../errors');
 const CategoryProduct = require('../models/CategoryProduct');
 const Category = require('../models/Category');
+const OrderProduct = require('../models/OrderProducts');
+const { Sequelize, Op } = require('sequelize');
 const Picture = require('../models/Picture');
 
 class ProductController {
@@ -112,6 +114,47 @@ class ProductController {
         await categoryProduct.destroy();
     }
 
+    async getTopSellers() {
+        let topSellers;
+
+        const orders = await OrderProduct.findAll({
+            group: ['productId'],
+            attributes: ['productId', [Sequelize.fn('COUNT', Sequelize.col('"productId"')), 'orderQuantity']],
+            order: [[Sequelize.literal('"orderQuantity"'), 'DESC']]
+        });
+
+        if (orders.length === 0) {
+            topSellers = await Product.findAll({
+                order: [Sequelize.fn('RANDOM')],
+                limit: 5
+            });
+        }
+        else if (orders.length < 5) {
+            topSellers = await Product.findAll({
+                where: { id: [...orders.map(o => o.productId)] },
+                attributes: ['id', 'name', 'price', 'mainPicture']
+            });
+
+            const complement = await Product.findAll({
+                where: {
+                    [Op.not]: [{ id: orders.map(o => o.productId) }]
+                },
+                order: [Sequelize.fn('RANDOM')],
+                attributes: ['id', 'name', 'price', 'mainPicture'],
+                limit: 5 - orders.length
+            });
+
+            topSellers = [...topSellers, ...complement];
+        }
+        else {
+            topSellers = await Product.findAll({
+                where: { id: orders.map(o => o.productId) },
+                attributes: ['id', 'name', 'price', 'mainPicture']
+            });
+        }
+
+        return topSellers;
+    }
     getCategoryProducts(limit = null, offset = null) {
         return CategoryProduct.findAll({ limit, offset });
     }
