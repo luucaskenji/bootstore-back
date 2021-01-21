@@ -1,14 +1,12 @@
 const router = require('express').Router();
+const picturesController = require('../../controllers/picturesController');
 const productsController = require('../../controllers/productsController');
-const productsSchemas = require('../../schemas/productsSchemas');
 const authMiddleware = require('../../middlewares/auth');
-const { ConflictError, NotFoundError } = require('../../errors');
-const Category = require('../../models/Category');
 
 router.post('/', async (req, res) => {
     const {productId,url} = req.body;
     try {
-        const picture = await productsController.addPicture(productId, url);
+        const picture = await picturesController.createPicture(productId, url);
         res.status(200).send(picture);
     }
     catch (err) {
@@ -18,7 +16,7 @@ router.post('/', async (req, res) => {
 });
 
 
-router.get('/pictures', async (req, res) => {
+router.get('/', async (req, res) => {
     let limit = null;
     let offset = null;
 
@@ -29,13 +27,12 @@ router.get('/pictures', async (req, res) => {
     }
 
     try {
-        const pictures = await productsController.getPictures(limit,offset)
-        const total = (await productsController.getPictures()).length;
+        const pictures = await picturesController.getAll(limit,offset)
+        const total = (await picturesController.getAll()).length;
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
-            'Content-Range': `${offset}-${relations.length}/${total}`
+            'Content-Range': `${offset}-${pictures.length}/${total}`
         });
-        console.log(pictures);
         res.status(200).send(pictures);
     }
     catch (err) {

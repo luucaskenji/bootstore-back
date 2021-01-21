@@ -109,7 +109,7 @@ class ProductController {
     }
 
     async getPictures(limit = null, offset = null) {
-        return await Picture.fildAll({limit,offset});
+        return await Picture.findAll({limit,offset});
     }
 }
 
