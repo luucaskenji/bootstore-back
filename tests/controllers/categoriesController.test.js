@@ -19,7 +19,7 @@ describe('Testing createCategory of categoriesController', () => {
         expect(category).rejects.toThrow(ConflictError)
     }),
 
-    it('findOrCreate - should return an array containing the object of the created category.', async () => {
+    it('findOrCreate - should return an object of the created category.', async () => {
         
         const Category = require('../../src/models/Category');
 
@@ -79,7 +79,7 @@ describe('Testing editCategory of categoriesController', () => {
 
 describe('Testing deleteCategory of categoriesController', () => {
 
-    it('deleteCategory - should return an error throw if the category does not exist.', async () => {
+    it('deleteCategory - should return a throw error if the category does not exist.', async () => {
         const Category = require('../../src/models/Category');
 
         Category.findByPk.mockResolvedValue({
