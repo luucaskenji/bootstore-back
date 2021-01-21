@@ -31,7 +31,7 @@ router.get('/', authMiddleware, async (req, res) => {
     }
 
     try {
-        const products = await productsController.getAll(limit,offset)
+        const products = await productsController.getAll(limit, offset)
         const total = (await productsController.getAll()).length;
         res.set({
             'Access-Control-Expose-Headers': 'Content-Range',
@@ -39,7 +39,7 @@ router.get('/', authMiddleware, async (req, res) => {
         });
         res.send(products);
     }
-    catch(err) {
+    catch (err) {
         res.sendStatus(500);
     }
 });
@@ -50,7 +50,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
     id = parseInt(id);
 
     try {
-        res.status(200).send(await productsController.editProduct(id,req.body));
+        res.status(200).send(await productsController.editProduct(id, req.body));
     }
     catch (err) {
         if (err instanceof NotFoundError) return res.status(404).send(err.message);
@@ -86,13 +86,13 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.post('/:productId/categories/:categoryId', async (req,res) => {
+router.post('/:productId/categories/:categoryId', async (req, res) => {
     let { productId, categoryId } = req.params;
     productId = parseInt(productId);
     categoryId = parseInt(categoryId);
 
-    try{
-        await productsController.createCategoryProduct(productId,categoryId);
+    try {
+        await productsController.createCategoryProduct(productId, categoryId);
         res.sendStatus(200);
     }
     catch (err) {
@@ -101,15 +101,15 @@ router.post('/:productId/categories/:categoryId', async (req,res) => {
     }
 });
 
- router.get('/categories', async (req, res) => {
-     try {
+router.get('/categories', async (req, res) => {
+    try {
         const relations = await productsController.getCategoryProducts();
         res.status(200).send(relations);
-     }
-     catch (err) {
+    }
+    catch (err) {
         res.sendStatus(500);
-     }
- });
+    }
+});
 
 
 module.exports = router;

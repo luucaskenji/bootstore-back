@@ -2,6 +2,7 @@ const Product = require('../models/Product');
 const { ConflictError, NotFoundError } = require('../errors');
 const CategoryProduct = require('../models/CategoryProduct');
 const Category = require('../models/Category');
+const Picture = require('../models/Picture');
 
 class ProductController {
     async createProduct(productData) {
@@ -12,22 +13,42 @@ class ProductController {
         return product;
     }
 
-    getAll(limit = null,offset = null) {
+    getAll(limit = null, offset = null) {
         return Product.findAll({
             limit,
             offset,
-            include: [{
-                model: Category,
-                attributes: ['id', 'name'],
-                through: {
-                    attributes: []
+            include: [
+                {
+                    model: Category,
+                    attributes: ['id', 'name'],
+                    through: {
+                        attributes: []
+                    }
                 }
-            }]
+                ,
+                {
+                    model: Picture
+                }
+            ]
         });
     }
 
     async getProductById(id) {
-        const product = await Product.findByPk(id);
+        const product = await Product.findByPk(id, {
+            include: [
+                {
+                    model: Category,
+                    attributes: ['id', 'name'],
+                    through: {
+                        attributes: []
+                    }
+                }
+                ,
+                {
+                    model: Picture
+                }
+            ]
+        });
         if (!product) throw new NotFoundError('Product not found');
 
         return product;
@@ -89,9 +110,10 @@ class ProductController {
         await categoryProduct.destroy();
     }
 
-    getCategoryProducts(limit = null, offset = null){
-        return CategoryProduct.findAll({limit,offset});
+    getCategoryProducts(limit = null, offset = null) {
+        return CategoryProduct.findAll({ limit, offset });
     }
+
 }
 
 module.exports = new ProductController();
