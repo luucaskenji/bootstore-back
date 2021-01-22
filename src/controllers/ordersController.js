@@ -38,8 +38,6 @@ class OrderController {
         return order;
     }
 
-
-
     async deleteOrder(id) {
         const order = await Order.findByPk(id);
         if (!order) throw new NotFoundError('Order not found');
@@ -48,6 +46,6 @@ class OrderController {
 
         await order.destroy();
     }
-}
+};
 
 module.exports = new OrderController();

@@ -1,6 +1,8 @@
 require('dotenv').config();
 const usersController = require('../../src/controllers/usersController');
-const { ConflictError, NotFoundError, AuthError } = require ('../../src/errors');
+const ConflictError = require ('../../src/errors/ConflictError');
+const NotFoundError = require ('../../src/errors/NotFoundError');
+const AuthError = require ('../../src/errors/AuthError');
 
 
 jest.mock('../../src/models/User.js');

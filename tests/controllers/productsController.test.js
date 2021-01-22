@@ -1,10 +1,13 @@
 require('dotenv').config();
 const productsController = require('../../src/controllers/productsController');
-const { ConflictError, NotFoundError } = require ('../../src/errors/ConflictError.js');
+const ConflictError = require ('../../src/errors/ConflictError');
+const NotFoundError = require ('../../src/errors/NotFoundError');
+
 
 jest.mock('../../src/models/Product.js');
 jest.mock('../../src/models/Category.js');
 jest.mock('../../src/models/CategoryProduct.js');
+jest.mock('../../src/models/OrderProducts.js');
 
 describe('Testing createProduct of productsController', () => {
 
@@ -224,7 +227,7 @@ describe('Testing deleteProduct of procutsController', () => {
 
 describe('Testing createCategoryProduct of productsController', () => {
 
-    it('createCategoryProduct - Should return an throw error trying to create a category product for products does not exists.', async () => {
+    it('createCategoryProduct - Should return a throw error if categoryProduct does not exists.', async () => {
         
         const Product = require('../../src/models/Product');
 
@@ -238,7 +241,7 @@ describe('Testing createCategoryProduct of productsController', () => {
         expect(product).rejects.toThrow(NotFoundError)
     });
 
-    it('createCategoryProduct - Should return an throw error trying to create a category product with a category does not exists.', async () => {
+    it('createCategoryProduct - Should return a throw error if categoryProduct does not exists.', async () => {
         
         const Category = require('../../src/models/Category');
 
@@ -252,8 +255,8 @@ describe('Testing createCategoryProduct of productsController', () => {
         expect(product).rejects.toThrow(NotFoundError)
     });
 
-    it('createCategoryProduct - Should return an throw error trying to create relation already exists.', async () => {
-       
+    it('createCategoryProduct - Should return a throw error trying to create relation already exists.', async () => {
+
         const CategoryProduct = require('../../src/models/CategoryProduct');
 
         CategoryProduct.findOne.mockResolvedValue({
@@ -267,7 +270,42 @@ describe('Testing createCategoryProduct of productsController', () => {
             return await productsController.createCategoryProduct(1, 2);
         }
 
-        expect(product).rejects.toThrow(ConflictError)
+        expect(product).rejects.toThrow(NotFoundError)
+    });
+
+    it('createCategoryProduct - Should return a throw error if categoryProduct already exists.', async () => {
+
+        const Product = require('../../src/models/Product');
+        Product.findByPk.mockResolvedValue({
+            "id": 1,
+            "name": "Incenso Massala Nag Champa",
+            "price": 1400,
+            "description": "Energia da Meditação",
+            "units": 7,
+            "mainPicture": "https://d17e8p84ng9nyb"
+           
+        });
+
+        const Category = require('../../src/models/Category');
+        Category.findByPk.mockResolvedValue({
+             "id": 1,
+             "name": "Incenso"
+        });
+
+        const CategoryProduct = require('../../src/models/CategoryProduct');
+
+        CategoryProduct.findOne.mockResolvedValue({
+            "id": 1,
+            "productId": 1,
+            "categoryId": 2,
+        });
+
+        async function categoryProduct() {
+            return await productsController.createCategoryProduct(1, 1);
+        }
+
+        expect(categoryProduct).rejects.toThrow(ConflictError)
+
     });
 
     it('createCategoryProduct - Should return undefined if CategoryProduct was successfully created.', async () => {
@@ -284,14 +322,12 @@ describe('Testing createCategoryProduct of productsController', () => {
         });
 
         const Category = require('../../src/models/Category');
-
         Category.findByPk.mockResolvedValue({
              "id": 1,
              "name": "Incenso"
         });
 
         const CategoryProduct = require('../../src/models/CategoryProduct');
-
         CategoryProduct.findOne.mockResolvedValue(null);
 
         CategoryProduct.create.mockResolvedValue({
@@ -306,35 +342,194 @@ describe('Testing createCategoryProduct of productsController', () => {
 
     });
 
-    describe('Testing deleteCategoryProduct of products Controller', () => {
+});
 
-        it('deleteCategoryProduct - should return a throw error if the relations does not exist.', async () => {
-            
-            const CategoryProduct = require('../../src/models/CategoryProduct');
+describe('Testing deleteCategoryProduct of productsController', () => {
 
-            CategoryProduct.findOne.mockResolvedValue(null);
-    
-            async function categoryProduct() {
-                return await productsController.deleteCategoryProduct(1);
-            }
-    
-            expect(categoryProduct).rejects.toThrow(NotFoundError)
+    it('deleteCategoryProduct - should return a throw error if the relations does not exist.', async () => {
+        
+        const CategoryProduct = require('../../src/models/CategoryProduct');
+
+        CategoryProduct.findOne.mockResolvedValue(null);
+
+        async function categoryProduct() {
+            return await productsController.deleteCategoryProduct(1);
+        }
+
+        expect(categoryProduct).rejects.toThrow(NotFoundError)
+    });
+
+    it('deleteCategory - Should return undefined if relation was successfully deleted', async () => {
+
+        const CategoryProduct = require('../../src/models/CategoryProduct');
+
+        CategoryProduct.findOne.mockResolvedValue({
+            "id": 1,
+            "productId": 1,
+            "categoryId": 2,
+            destroy: async () => Promise.resolve()
         });
-    
-        it('deleteCategory - Should return undefined if relation was successfully deleted', async () => {
-    
-            const CategoryProduct = require('../../src/models/CategoryProduct');
 
-            CategoryProduct.findOne.mockResolvedValue({
-                "id": 1,
+        const relation = await productsController.deleteCategoryProduct(1);
+        
+        expect(relation).toBe(undefined)
+    })
+});
+
+describe('Testing getTopSellers of productsController', () => {
+
+    it('getTopSellers - Should return an array that has a length of 5 when orders.length is less than 5.', async () => {
+
+        const OrderProduct = require('../../src/models/OrderProducts');
+        const Product = require('../../src/models/Product');
+
+        OrderProduct.findAll.mockResolvedValue([
+            {"id": 1},
+            {"id": 2},
+            {"id": 3}
+        ]);
+
+        Product.findAll.mockResolvedValueOnce([
+            {
+                "id": 4,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 5,
                 "productId": 1,
                 "categoryId": 2,
-                destroy: async () => Promise.resolve()
-            });
+                
+            }
+        ]);
+
+        Product.findAll.mockResolvedValueOnce([
+            {
+                "id": 6,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 7,
+                "productId": 1,
+                "categoryId": 2,
+                
+            },
+            {
+                "id": 8,
+                "productId": 1,
+                "categoryId": 2,
+                
+            }
+        ]);
+
+
+        const topSellers = await productsController.getTopSellers();
+
+        expect(topSellers).toHaveLength(5);
+         
+    });
+
+    it('getTopSellers - Should return an array that has a length of 5 when orders.length its 0.', async () => {
+
+        const OrderProduct = require('../../src/models/OrderProducts');
+        const Product = require('../../src/models/Product');
+
+        OrderProduct.findAll.mockResolvedValue([]);
+
+        Product.findAll.mockResolvedValue([
+            {
+                "id": 4,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 5,
+                "productId": 1,
+                "categoryId": 2,
+                
+            },
+            {
+                "id": 6,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 7,
+                "productId": 1,
+                "categoryId": 2,
+                
+            },
+            {
+                "id": 8,
+                "productId": 1,
+                "categoryId": 2,
+                
+            }
+        ]);
+
     
-            const relation = await productsController.deleteCategoryProduct(1);
-            
-            expect(relation).toBe(undefined)
-        })
+        const topSellers = await productsController.getTopSellers();
+
+        expect(topSellers).toHaveLength(5);
+         
+    });
+
+    it('getTopSellers - Should return an array that has a length of 5 when orders.length is greater than 5.', async () => {
+
+        const OrderProduct = require('../../src/models/OrderProducts');
+        const Product = require('../../src/models/Product');
+
+        OrderProduct.findAll.mockResolvedValue([
+            {"id": 1},
+            {"id": 2},
+            {"id": 3},
+            {"id": 4},
+            {"id": 5},
+            {"id": 6},
+        ]);
+
+        Product.findAll.mockResolvedValue([
+            {
+                "id": 4,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 5,
+                "productId": 1,
+                "categoryId": 2,
+                
+            },
+            {
+                "id": 6,
+                "productId": 2,
+                "categoryId": 3,
+                
+            },
+            {
+                "id": 7,
+                "productId": 1,
+                "categoryId": 2,
+                
+            },
+            {
+                "id": 8,
+                "productId": 1,
+                "categoryId": 2,
+                
+            }
+        ]);
+
+    
+        const topSellers = await productsController.getTopSellers();
+
+        expect(topSellers).toHaveLength(5);
+         
     });
 });
