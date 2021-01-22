@@ -88,6 +88,9 @@ class ProductController {
         const product = await Product.findByPk(id);
         if (!product) throw new NotFoundError('Product not found');
 
+        await CategoryProduct.destroy({where: {productId: product.id}});
+        await OrderProduct.destroy({where: {productId: product.id}});
+
         await product.destroy();
     }
 
@@ -99,6 +102,7 @@ class ProductController {
         if (!category) throw new NotFoundError('Category not found');
 
         const categoryProduct = await CategoryProduct.findOne({ where: { productId, categoryId } });
+        
         if (categoryProduct) {
             throw new ConflictError('Relation already exists');
         }
@@ -155,8 +159,9 @@ class ProductController {
 
         return topSellers;
     }
-    getCategoryProducts(limit = null, offset = null) {
-        return CategoryProduct.findAll({ limit, offset });
+
+    async getCategoryProducts(limit = null, offset = null) {
+        return await CategoryProduct.findAll({ limit, offset });
     }
 
 }

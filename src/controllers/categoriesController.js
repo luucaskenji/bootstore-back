@@ -32,6 +32,8 @@ class CategoriesController {
         const category = await Category.findByPk(id);
         if(!category) throw new NotFoundError('Category not found');
         
+        CategoryProduct.destroy({where: {categoryId: category.id}})
+
         await category.destroy();
     }
 }

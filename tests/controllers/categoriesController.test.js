@@ -1,16 +1,19 @@
 require('dotenv').config();
 const categoriesController = require('../../src/controllers/categoriesController');
-const { ConflictError, NotFoundError } = require ('../../src/errors/ConflictError.js');
+const ConflictError = require ('../../src/errors/ConflictError');
+const NotFoundError = require ('../../src/errors/NotFoundError');
+
+
 jest.mock('../../src/models/Category.js');
 
 describe('Testing createCategory of categoriesController', () => {
-    it('findOrCreate - should return an error throw trying to create a category that already exists.', async () => {
+    it('createCategory - should return an throw error trying to create a category that already exists.', async () => {
         
         const Category = require('../../src/models/Category');
 
-        Category.findOrCreate.mockResolvedValue([{
+        Category.findOne.mockResolvedValue({
             "id": 1,
-            "name": "Incenso"}]);
+            "name": "Incenso"});
 
         async function category() {
             return await categoriesController.createCategory("Incenso")
@@ -19,7 +22,7 @@ describe('Testing createCategory of categoriesController', () => {
         expect(category).rejects.toThrow(ConflictError)
     }),
 
-    it('findOrCreate - should return an object of the created category.', async () => {
+    it('createCategory - should return an object of the created category.', async () => {
         
         const Category = require('../../src/models/Category');
 
@@ -29,7 +32,6 @@ describe('Testing createCategory of categoriesController', () => {
             "name": "Meditação"
         });
 
-        
         const category = await categoriesController.createCategory("Meditação");
         
         expect(category).toEqual(expect.objectContaining({
@@ -42,13 +44,11 @@ describe('Testing createCategory of categoriesController', () => {
 
 describe('Testing editCategory of categoriesController', () => {
 
-    it('editCategory - should return an error throw if the category does not exist.', async () => {
+    it('editCategory - should return a throw error if the category does not exist.', async () => {
         
         const Category = require('../../src/models/Category');
 
-        Category.findByPk.mockResolvedValue({
-            "id": 1,
-            "name": "Incenso"});
+        Category.findByPk.mockResolvedValue(null);
 
         async function category() {
             return await categoriesController.editCategory(99, 'Insensos') 
@@ -82,9 +82,7 @@ describe('Testing deleteCategory of categoriesController', () => {
     it('deleteCategory - should return a throw error if the category does not exist.', async () => {
         const Category = require('../../src/models/Category');
 
-        Category.findByPk.mockResolvedValue({
-            "id": 1,
-            "name": "Incenso"});
+        Category.findByPk.mockResolvedValue(null);
 
         async function category() {
             return await categoriesController.deleteCategory(99) 
