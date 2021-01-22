@@ -1,5 +1,6 @@
-const { ConflictError, NotFoundError } = require('../errors');
 const Picture = require('../models/Picture');
+const ConflictError = require ('../../src/errors/ConflictError');
+const NotFoundError = require ('../../src/errors/NotFoundError');
 
 class PictureController {
 
