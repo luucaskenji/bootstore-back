@@ -24,8 +24,9 @@
   "devDependencies": {},
   "scripts": {
     "test": "jest --runInBand",
-    "dev": "npx nodemon ./src/server.js",
-    "migrations": "npx sequelize-cli db:migrate"
+    "dev": "npx nodemon src/server.js",
+    "migrations": "npx sequelize-cli db:migrate",
+    "start": "node src/server.js"
   },
   "repository": {
     "type": "git",
