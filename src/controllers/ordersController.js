@@ -6,9 +6,16 @@ const PaymentDatas = require('../models/PaymentDatas');
 
 class OrderController {
     async createOrder(orderData) {
-        const { userId, cart, addressId, paymentMethod, cardName, cardNumber, expiration, cvv } = orderData;
+        const { userId, cart, addressId, paymentMethod } = orderData;
+
         const order = await Order.create({ userId, addressId, status: 'payment made' });
-        await PaymentDatas.create({ paymentMethod, orderId: order.id, cardName, cardNumber, expiration, cvv });
+
+        if(paymentMethod === 'credit card') {
+            const { cardName, cardNumber, expiration, cvv } = orderData;
+            await PaymentDatas.create({ paymentMethod, orderId: order.id, cardName, cardNumber, expiration, cvv });
+        } else {
+            await PaymentDatas.create({ paymentMethod, orderId: order.id });
+        }
         
         await this._createOrderProduct(order.id, cart);
 
