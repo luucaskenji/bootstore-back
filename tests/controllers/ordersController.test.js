@@ -133,11 +133,12 @@ describe('Testing getOrderById of ordersController', () => {
 describe('Testing deleteOrder of ordersController', () => {
 
     it('deleteOrder - should return a throw error if the order does not exist.', async () => {
+
         const Order = require('../../src/models/Order');
         Order.findByPk.mockResolvedValue(null);
 
         async function order() {
-            return await ordersController.deleteOrder(99) 
+            return await ordersController.deleteOrder(9999999) 
         }
 
         expect(order).rejects.toThrow(NotFoundError)

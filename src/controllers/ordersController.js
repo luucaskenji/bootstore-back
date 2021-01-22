@@ -1,6 +1,8 @@
-const Order = require("../models/Order");
-const OrderProduct = require("../models/OrderProducts");
-const Product = require("../models/Product");
+const Address = require('../models/Address');
+const Order = require('../models/Order');
+const OrderProduct = require('../models/OrderProducts');
+const Product = require('../models/Product');
+const User = require('../models/User');
 
 class OrderController {
     async createOrder(orderData) {
@@ -16,7 +18,7 @@ class OrderController {
             const { product, quantity } = i;
             await OrderProduct.create({ productId: product.id, quantity, orderId });
         });
-    };
+    }
 
     getAll(limit = null, offset = null) {
         return Order.findAll({
@@ -29,16 +31,37 @@ class OrderController {
                 }
             }]
         });
-    };
+    }
 
     async getOrderById(id) {
-        const order = await Order.findByPk(id, { include: Product, through: OrderProduct });
+        const order = await Order.findByPk(id, {
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'addressId']
+            },
+            include: [
+                {
+                    model: Product,
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
+                    through: {
+                        attributes: []
+                    }
+                },
+                {
+                    model: Address,
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'userId']
+                    }
+                }
+            ],
+            through: OrderProduct
+        });
+        
         if (!order) throw new NotFoundError('Order not found');
 
         return order;
     }
-
-
 
     async deleteOrder(id) {
         const order = await Order.findByPk(id);
@@ -47,7 +70,7 @@ class OrderController {
         await OrderProduct.destroy({ where: { orderId: order.id } });
 
         await order.destroy();
-    };
+    }
 };
 
 module.exports = new OrderController();

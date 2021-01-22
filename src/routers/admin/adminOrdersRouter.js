@@ -44,6 +44,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     const id = parseInt(req.params.id);
+
     try {
         res.status(200).send(await ordersController.getOrderById(id));
     }
