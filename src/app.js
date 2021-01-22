@@ -17,5 +17,6 @@ app.use('/categories', categoriesRouter);
 app.use('/products', productsRouter);
 app.use('/admin', adminRouter);
 app.use('/users', usersRouter);
+app.use('/orders', ordersRouter);
 
 module.exports = app;

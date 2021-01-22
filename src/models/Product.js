@@ -19,14 +19,18 @@ Product.init(
             type: Sequelize.INTEGER,
             allowNull: false
         },  
-        description:{
+        description: {
             type: Sequelize.STRING,
         },  
-        units:{
+        units: {
             type:Sequelize.INTEGER,
         },
-        mainPicture:{
+        mainPicture: {
             type:Sequelize.STRING,
+        },
+        alt: {
+            type: Sequelize.STRING,
+            allowNull: true
         },
         createdAt: {
             type: Sequelize.DATE,

@@ -8,14 +8,14 @@ router.post('/', async (req, res) => {
 
     const { error } = orderSchemas.postOrder.validate(req.body);
     if (error) return res.sendStatus(422);
+    
 
     try {
         const order = await ordersController.createOrder(req.body);
         res.status(201).send(order);
     }
     catch(err) {
-        if (err instanceof ConflictError) res.status(409).send(err.message);
-        else res.sendStatus(500);
+        res.sendStatus(500);
     }
 });
 

@@ -136,7 +136,7 @@ class ProductController {
         else if (orders.length < 5) {
             topSellers = await Product.findAll({
                 where: { id: [...orders.map(o => o.productId)] },
-                attributes: ['id', 'name', 'price', 'mainPicture']
+                attributes: ['id', 'name', 'price', 'mainPicture', 'alt']
             });
 
             const complement = await Product.findAll({
@@ -144,7 +144,7 @@ class ProductController {
                     [Op.not]: [{ id: orders.map(o => o.productId) }]
                 },
                 order: [Sequelize.fn('RANDOM')],
-                attributes: ['id', 'name', 'price', 'mainPicture'],
+                attributes: ['id', 'name', 'price', 'mainPicture', 'alt'],
                 limit: 5 - orders.length
             });
 
@@ -153,7 +153,7 @@ class ProductController {
         else {
             topSellers = await Product.findAll({
                 where: { id: orders.map(o => o.productId) },
-                attributes: ['id', 'name', 'price', 'mainPicture']
+                attributes: ['id', 'name', 'price', 'mainPicture', 'alt']
             });
         }
 
