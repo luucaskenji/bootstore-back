@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const userSchemas = require('../schemas/userSchemas');
 const usersController = require('../controllers/usersController');
-const { ConflictError, NotFoundError } = require('../errors');
+const { NotFoundError } = require('../errors');
 
 router.post('/', async (req, res) => {
     const { error } = userSchemas.identityData.validate(req.body);
@@ -11,9 +11,8 @@ router.post('/', async (req, res) => {
     try {
         res.status(201).send(await usersController.createUser(req.body));
     }
-    catch(err) {
-        if (err instanceof ConflictError) res.status(409).send(err.message);
-        else res.sendStatus(500);
+    catch {
+        res.sendStatus(500);
     }
 });
 
@@ -53,13 +52,6 @@ router.post('/:id/address', async (req, res) => {
         if (err instanceof NotFoundError) res.status(404).send(err.message);
         else res.sendStatus(500);
     }
-});
-
-router.post('/:id/credit-card', (req, res) => {
-    const { error } = userSchemas.creditCard.validate(req.body);
-    if (error) return res.status(422).send(error.details[0].message);
-
-    res.sendStatus(201);
 });
 
 module.exports = router;

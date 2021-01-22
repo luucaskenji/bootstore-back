@@ -52,10 +52,4 @@ const adminSignIn = Joi.object({
     password: Joi.string().required()
 });
 
-const creditCard = Joi.object({
-    cardName: Joi.string().required(),
-    cardNumber: Joi.string().pattern(/^\d{4}\s\d{4}\s\d{4}\s\d{4}$/).required(),
-    cvv: Joi.string().pattern(/^\d{3}$/)
-});
-
-module.exports = { identityData, adminSignIn, addressdata, creditCard };
+module.exports = { identityData, adminSignIn, addressdata };
