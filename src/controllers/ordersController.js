@@ -2,6 +2,7 @@ const Address = require('../models/Address');
 const Order = require('../models/Order');
 const OrderProduct = require('../models/OrderProducts');
 const Product = require('../models/Product');
+const User = require('../models/User');
 
 class OrderController {
     async createOrder(orderData) {
@@ -34,14 +35,23 @@ class OrderController {
 
     async getOrderById(id) {
         const order = await Order.findByPk(id, {
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'addressId']
+            },
             include: [
                 {
-                    model: Product
+                    model: Product,
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
+                    through: {
+                        attributes: []
+                    }
                 },
                 {
                     model: Address,
                     attributes: {
-                        exclude: ['createdAt', 'updatedAt']
+                        exclude: ['createdAt', 'updatedAt', 'userId']
                     }
                 }
             ],
