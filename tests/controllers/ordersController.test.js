@@ -3,10 +3,11 @@ const ordersController = require('../../src/controllers/ordersController');
 const { NotFoundError } = require ('../../src/errors/ConflictError.js');
 
 jest.mock('../../src/models/Order.js');
+jest.mock('../../src/models/OrderProducts.js');
 
 describe('Testing createOrder of ordersController', () => {
 
-    it('createOrder - Should return an error throw trying to create a category that already exists.', async () => {
+    it('createOrder - Should return a object with the ORder include products.', async () => {
         
         const Order = require('../../src/models/Order');
 
@@ -23,15 +24,16 @@ describe('Testing createOrder of ordersController', () => {
                     quantity: 13
                 },
             ]})
-
+            
         const orderData = {
-            "onderId": 1,
-            "products": [
+            "userId": 1,
+            "cart": [
                 {
                     productId: 1 ,
                     quantity: 13
                 },
-            ]
+            ],
+            "addressId": 1
          }
 
         const order = await ordersController.createOrder(orderData);
@@ -144,7 +146,6 @@ describe('Testing deleteOrder of ordersController', () => {
     it('deleteOrder - Should return undefined if order was successfully deleted', async () => {
 
         const Order = require('../../src/models/Order');
-
         Order.findByPk.mockResolvedValue({
             "onderId": 1,
             "products": [
@@ -153,6 +154,15 @@ describe('Testing deleteOrder of ordersController', () => {
                     quantity: 13
                 },
             ],
+            destroy: async () => Promise.resolve()
+        });
+
+        const OrderProducts = require('../../src/models/OrderProducts');
+        OrderProducts.destroy.mockResolvedValue({
+            "id": 1,
+            "quantity": 3,
+            "orderId": 1,
+            "productId": 4,
             destroy: async () => Promise.resolve()
         });
 
