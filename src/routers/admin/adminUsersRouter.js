@@ -33,11 +33,14 @@ router.post('/sign-in', async (req, res) => {
     }
 });
 
-router.post('/sign-out', async (req, res) => {    
-    try {        
-        res.status(204).send(await usersController.postAdminSignOut());
+router.post('/sign-out', async (req, res) => {
+    try {
+        await usersController.postAdminSignOut();
+
+        res.sendStatus(204);
     }
-    catch {
+    catch(err) {
+        console.error(err);
         res.sendStatus(500);
     }
 });
