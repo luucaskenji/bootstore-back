@@ -1,6 +1,7 @@
-const Order = require("../models/Order");
-const OrderProduct = require("../models/OrderProducts");
-const Product = require("../models/Product");
+const Address = require('../models/Address');
+const Order = require('../models/Order');
+const OrderProduct = require('../models/OrderProducts');
+const Product = require('../models/Product');
 
 class OrderController {
     async createOrder(orderData) {
@@ -32,7 +33,21 @@ class OrderController {
     }
 
     async getOrderById(id) {
-        const order = await Order.findByPk(id, { include: Product, through: OrderProduct });
+        const order = await Order.findByPk(id, {
+            include: [
+                {
+                    model: Product
+                },
+                {
+                    model: Address,
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    }
+                }
+            ],
+            through: OrderProduct
+        });
+        
         if (!order) throw new NotFoundError('Order not found');
 
         return order;
