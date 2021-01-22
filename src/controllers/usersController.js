@@ -3,18 +3,15 @@ const uuid = require('uuid');
 const User = require('../models/User');
 const Session = require('../models/Session');
 const Address = require('../models/Address');
-const { ConflictError, NotFoundError, AuthError } = require('../errors');
+const { NotFoundError, AuthError } = require('../errors');
 
 class UsersController {
     async createUser(userData) {
         const { cpf } = userData;
 
-        const findUser = await User.findOne({ where: { cpf }  });
-        if (findUser) throw new ConflictError('User is already on database');
+        const user = await User.findOne({ where: { cpf }  });
 
-        const createdUser = await User.create(userData);
-
-        return createdUser;
+        return user || await User.create(userData);
     }
 
     getAll(limit = null, offset = null) {
