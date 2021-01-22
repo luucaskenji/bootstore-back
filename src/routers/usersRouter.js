@@ -55,4 +55,11 @@ router.post('/:id/address', async (req, res) => {
     }
 });
 
+router.post('/:id/credit-card', (req, res) => {
+    const { error } = userSchemas.creditCard.validate(req.body);
+    if (error) return res.status(422).send(error.details[0].message);
+
+    res.sendStatus(201);
+});
+
 module.exports = router;
