@@ -41,8 +41,8 @@ class UsersController {
         return await Session.create({ token });
     }
 
-    async postAdminSignOut(token) {
-        await Session.destroy({ where: {token} });
+    async postAdminSignOut() {
+        await Session.destroy({ where: {} });
     }
 
     async postUserAddress(userId, data) {
