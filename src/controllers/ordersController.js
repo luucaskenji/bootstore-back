@@ -2,12 +2,14 @@ const Address = require('../models/Address');
 const Order = require('../models/Order');
 const OrderProduct = require('../models/OrderProducts');
 const Product = require('../models/Product');
-const User = require('../models/User');
+const PaymentDatas = require('../models/PaymentDatas');
 
 class OrderController {
     async createOrder(orderData) {
-        const { userId, cart, addressId } = orderData;
-        const order = await Order.create({ userId, addressId });
+        const { userId, cart, addressId, paymentMethod, cardName, cardNumber, expiration, cvv } = orderData;
+        const order = await Order.create({ userId, addressId, status: 'payment made' });
+        await PaymentDatas.create({ paymentMethod, orderId: order.id, cardName, cardNumber, expiration, cvv });
+        
         await this._createOrderProduct(order.id, cart);
 
         return await Order.findByPk(order.id, { include: Product, through: OrderProduct });

@@ -15,11 +15,11 @@ OrderProduct.init(
             type: Sequelize.INTEGER,
             allowNull: false
         },
-        productId:{
+        productId: {
             type: Sequelize.INTEGER,
             allowNull: false
         },
-        quantity:{
+        quantity: {
             type: Sequelize.INTEGER,
             allowNull:false,
         },

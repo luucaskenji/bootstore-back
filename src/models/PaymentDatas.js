@@ -1,9 +1,9 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require('../utils/database');
 
-class Order extends Sequelize.Model { }
+class PaymentDatas extends Sequelize.Model { }
 
-Order.init(
+PaymentDatas.init(
     {
         id: {
             type: Sequelize.INTEGER,
@@ -11,17 +11,29 @@ Order.init(
             allowNull: false,
             autoIncrement: true,
         },
-        userId: {
+        paymentMethod: {
+            type: Sequelize.STRING,
+            allowNull: false
+        },
+        orderId: {
             type: Sequelize.INTEGER,
-            allowNull: false
+            allowNull: false,
         },
-        status: {
+        cardName: {
             type: Sequelize.STRING,
-            allowNull:false,
+            allowNull: true,
         },
-        addressId: {
+        cardNumber: {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: true,
+        },
+        expiration: {
+            type: Sequelize.STRING,
+            allowNull: true,
+        },
+        cvv: {
+            type: Sequelize.STRING(3),
+            allowNull: true,
         },
         createdAt: {
             type: Sequelize.DATE,
@@ -34,8 +46,8 @@ Order.init(
     },
     {
         sequelize,
-        modelName: 'order'
+        modelName: 'paymentDatas'
     }
 );
 
-module.exports = Order;
+module.exports = PaymentDatas;

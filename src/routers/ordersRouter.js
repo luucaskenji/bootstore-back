@@ -5,6 +5,7 @@ const { ConflictError, NotFoundError } = require('../errors');
 const orderSchemas = require('../schemas/ordersSchemas');
 
 router.post('/', async (req, res) => {
+
     const { error } = orderSchemas.postOrder.validate(req.body);
     if (error) return res.sendStatus(422);
 
