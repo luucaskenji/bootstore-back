@@ -32,7 +32,7 @@ class UsersController {
     }
 
     async postAdminSignIn(username, password) {
-        if (username !== (process.env.ADMIN_USERNAME || 'admin') || password !== (process.env.ADMIN_PASSWORD || 'admin')) {
+        if (username !== process.env.ADMIN_USERNAME || password !== process.env.ADMIN_PASSWORD) {
             throw new AuthError('Wrong username or password');
         }
 
